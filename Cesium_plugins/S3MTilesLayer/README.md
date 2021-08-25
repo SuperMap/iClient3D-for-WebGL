@@ -2,7 +2,7 @@
 
 该插件支持在Cesium中创建S3MTilesLayer图层，目前支持的功能有：
 
-* 加载S3M/S3MBloc格式的数据
+* 加载S3M/S3MBlock格式的数据
 * 拾取
 * 对象是否可见
 * 压平
