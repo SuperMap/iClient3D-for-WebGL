@@ -7,7 +7,7 @@
 围绕S3M数据规范，我们推出了相关的产品，插件以及组件，在轻量高效的同时，满足用户的各类应用。
 
 ![](./Cesium_S3MLayer_Plugins/figures/all.png)
-_使用iClient3D-for-WebGL加载S3M数据_
+_S3M Inside_
 
 # 周边
 
