@@ -6,6 +6,18 @@
 
 围绕S3M数据规范，我们推出了相关的产品，插件以及组件，在轻量高效的同时，满足用户的各类应用。
 
+![](./Cesium_S3MLayer_Plugins/figures/ic-3D1.jpg)
+_使用iClient3D-for-WebGL加载S3M数据_
+
+![](./Cesium_S3MLayer_Plugins/figures/cbd.jpg)
+_使用S3M图层加载的北京CBD精模数据_
+
+![](./Cesium_S3MLayer_Plugins/figures/vue.jpg)
+_使用Vue组件加载倾斜数据_
+
+![](./Cesium_S3MLayer_Plugins/figures/iearth.jpg)
+_使用iEarth在线应用加载BIM数据_
+
 # 周边
 
 * [S3M ](https://github.com/SuperMap/s3m-spec)
