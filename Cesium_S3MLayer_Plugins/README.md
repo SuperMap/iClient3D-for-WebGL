@@ -1,6 +1,6 @@
 # Cesium_S3MLayer_Plugins
 
-![](figures/cbd.png)
+![](figures/cbd.jpg)
 
 _使用S3M图层加载的北京CBD精模数据_
 
