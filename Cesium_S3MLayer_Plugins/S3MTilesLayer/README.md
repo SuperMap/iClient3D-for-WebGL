@@ -1,3 +1,6 @@
+# 新增功能
+	2021/09/02		新增SuperMapTerrainProvider和SuperMapImageryProvider插件
+
 # S3MTilesLayer
 
 该插件支持在Cesium中创建S3MTilesLayer图层，目前支持的功能有：
