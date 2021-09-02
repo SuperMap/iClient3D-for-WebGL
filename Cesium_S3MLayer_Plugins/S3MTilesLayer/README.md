@@ -22,4 +22,4 @@
 
 ## 贡献者
 
-- [Chongjin Bai](https://github.com/baichongjin)
+- [白崇锦](https://github.com/baichongjin)
