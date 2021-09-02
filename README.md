@@ -18,7 +18,7 @@ _S3M Inside_
 * [Cesium_S3MLayer_Plugins](./Cesium_S3MLayer_Plugins/)
     * Cesium_plugins是iClient3D for WebGL产品面向Cesium推出的插件集合，用户基于该插件，在Cesium中高效快捷的实现iClient3D for WebGL产品的部分功能
 
-* [iClient3D-vue](https://github.com/SuperMap/iClient3D-vue)
+* [iClient3D-Vue](https://github.com/SuperMap/iClient3D-vue)
     * 在SuperMap_iClient3D_for_WebGL产品包基础上使用Vue框架进行封装，将三维应用的常用功能以组件的形式提供，使之轻量且高效
 
 * [SuperMap-iEarth](https://github.com/SuperMap/SuperMap-iEarth)
