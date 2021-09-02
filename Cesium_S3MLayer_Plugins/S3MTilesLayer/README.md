@@ -19,3 +19,7 @@
 * 将当前文件放到Cesium文件夹中，保持和Build文件夹同一目录
 * 启动Cesium
 * 以Http形式访问examples中的范例
+
+## 贡献者
+
+- [Chongjin Bai](https://github.com/baichongjin)
