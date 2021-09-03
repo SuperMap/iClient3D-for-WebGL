@@ -3,37 +3,15 @@
 
 # S3MDataSource
 
-该插件支持在Cesium中以DataSource方式加载S3M数据
+该插件支持在Cesium中直接加载S3M数据
 
 
 ## 使用方式
 
-* 将当前文件放在Source/DataSources目录下，层级如下所示
+1. 将Source/DataSources/S3MDataSource.js文件和示例程序Apps/Sandcastle/gallery/S3M 3D Object Layer.html拷贝到Cesium同级目录下。
 
-|—— Source
+2. 编译新的Source/Cesium.js文件以包含S3MDataSource.js文件的引用。或者您可以手动在Source/Cesium.js最后加上引用。
 
-|———— DataSources
+3. 通过http服务访问示例程序。
 
-|—————— **S3MDataSource.js**
-
-* 当前插件提供一个示例程序，放在Apps/Sandcastle/gallery目录下，层级如下所示
-
-|—— Apps
-
-|———— Sandcastle
-
-|—————— gallery
-
-|———————— **S3M 3D Object Layer.html**
-
-
-如果您需要在Release版本中包含该功能，那么需要您在安装完需要的node.js库之后执行gulp minify重新生成Build/Cesium/Cesium.js文件。
-
-范例效果：
-![](../figures/S3M_DataSource.jpg)
-_S3M DataSource_
-
-## 贡献者
-
-- 任飞翔
-- 白崇锦
+4. 如果您需要在Release版本中包含该功能，那么需要编译出新的Build/Cesium.js文件，具体操作方法可以参考Cesium官方文档。
