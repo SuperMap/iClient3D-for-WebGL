@@ -29,6 +29,10 @@
 
 如果您需要在Release版本中包含该功能，那么需要您在安装完需要的node.js库之后执行gulp minify重新生成Build/Cesium/Cesium.js文件。
 
+范例效果：
+![](../figures/S3M_DataSource.jpg)
+_S3M DataSource_
+
 ## 贡献者
 
 - 任飞翔
