@@ -1,12 +1,35 @@
-# Cesium_plugins
+# 新增功能
+	2021/09/03		新增Cesium加载S3M数据源工具类
 
-![](figures/cbd.jpg)
+# S3MDataSource
 
-_使用S3M图层加载的北京CBD精模数据_
+该插件支持在Cesium中以DataSource方式加载S3M数据
 
-# 概述
-Cesium_plugins是iClient3D for WebGL产品面向Cesium推出的插件集合，用户基于该插件，可以在Cesium中高效快捷的实现iClient3D for WebGL产品的部分功能。
 
-目前，插件集合中提供了S3MTilesLayer和S3MDataSource两款插件，方便用户以图层或数据源的形式在Cesium中加载S3M数据及相关功能，满足不同的场景需求。
+## 使用方式
 
-该插件集合会持续优化、完善，条件成熟后也会逐步开源。
+* 将当前文件放在Source/DataSources目录下，层级如下所示
+
+|—— Source
+
+|———— DataSources
+
+|—————— **S3MDataSource.js**
+
+* 当前插件提供一个示例程序，放在Apps/Sandcastle/gallery目录下，层级如下所示
+
+|—— Apps
+
+|———— Sandcastle
+
+|—————— gallery
+
+|———————— **S3M 3D Object Layer.html**
+
+
+如果您需要在Release版本中包含该功能，那么需要您在安装完需要的node.js库之后执行gulp minify重新生成Build/Cesium/Cesium.js文件。
+
+## 贡献者
+
+- 任飞翔
+- 白崇锦
