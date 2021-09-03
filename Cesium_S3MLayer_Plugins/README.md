@@ -21,7 +21,7 @@ Cesium_S3MLayer_Plugins是iClient3D for WebGL产品面向Cesium推出的插件�
 
 * [S3MTilesLayer](./S3MTilesLayer/)
 
-    * 以图层形式在Cesium中加载S3M数据，并开发相关功能
+    * 以图层形式在Cesium中加载S3M数据，并支持压平，裁剪等相关功能
 
 * [S3MDataSource](./S3MDataSource/)
     * 以数据源形式在Cesium中加载S3M数据
