@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超图插件使用范例</title>
+    <link rel="stylesheet" href="./Cesum-1.67/Cesium/Widgets/widgets.css">
+    <script src="./Cesum-1.67/Cesium/Cesium.js"></script>
+    <script>
+        window.Adapter = Cesium;
+    </script>
+    <script src="./Build/SuperMap3D.js"></script>
+</head>
+<body>
+    <div id="SuperMap3DContainer"></div>
+    <script>
+        let viewer = new Cesium.Viewer("SuperMap3DContainer");
+        let scene = viewer.scene;
+        // 更多范例，请参考http://support.supermap.com.cn:8090/webgl/examples/webgl/examples.html#layer
+        scene.open("http://www.supermapol.com/realspace/services/3D-CBDCache20200416/rest/realspace");
+    </script>
+</body>
+</html>
