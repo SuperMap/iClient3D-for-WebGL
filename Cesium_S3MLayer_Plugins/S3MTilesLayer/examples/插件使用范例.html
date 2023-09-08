@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>插件3D Tiles</title>
+  <link href="./Cesum-1.67/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="./Cesum-1.67/Cesium/Cesium.js"></script>
+  <script src="./lib/jquery.min.js"></script>
+  <script src="./SuperMap3D/SuperMap3D.js"></script>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="loadingbar" class="spinner">
+    <div class="spinner-container container1">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container2">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container3">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+  </div>
+  <script>
+    function onload(Cesium) {
+      var viewer = new Cesium.Viewer("cesiumContainer");
+      var scene = viewer.scene;
+      scene.open(
+        "http://www.supermapol.com/realspace/services/3D-CBD/rest/realspace"
+      );
+      $("#loadingbar").remove();
+    }
+    if (typeof Cesium !== "undefined") {
+      window.startupCalled = true;
+      onload(Cesium);
+    }
+  </script>
+</body>
+
+</html>
