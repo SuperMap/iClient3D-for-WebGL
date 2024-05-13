@@ -16,7 +16,7 @@ _S3M Inside_
     * S3M (Spatial 3D Model)是一种开放式、可扩展的三维地理空间数据格式，为海量多源异构空间三维模型数据在不同终端之间的传输、交换与共享提供数据格式的具体规范
 
 * [Cesium_S3MLayer_Plugins](./Cesium_S3MLayer_Plugins/)
-    * Cesium_plugins是iClient3D for WebGL产品面向Cesium推出的插件集合，用户基于该插件，在Cesium中高效快捷的实现iClient3D for WebGL产品的部分功能
+    * Cesium_plugins是iClient3D for Cesium产品面向Cesium推出的插件集合，用户基于该插件，在Cesium中高效快捷的实现iClient3D for WebGL产品的部分功能
 
 * [iClient3D-Vue](https://github.com/SuperMap/iClient3D-vue)
     * 在SuperMap_iClient3D_for_WebGL产品包基础上使用Vue框架进行封装，将三维应用的常用功能以组件的形式提供，使之轻量且高效
