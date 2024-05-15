@@ -9,10 +9,29 @@ import Request from '../Core/Request.js';
 import RequestType from '../Core/RequestType.js';
 import Cesium3DTileContentState from '../Scene/Cesium3DTileContentState.js';
 import ComponentDatatype from '../Core/ComponentDatatype.js';
-import when from '../ThirdParty/when.js';
-import pako from '../ThirdParty/pako.js';
+import pako from '../ThirdParty/pako_inflate.js';
 import Empty3DTileContent from '../Scene/Empty3DTileContent.js';
-import FeatureDetection from '../Core/FeatureDetection.js';
+import RequestState from '../Core/RequestState.js';
+
+
+function defer() {
+    let resolve;
+    let reject;
+	Promise.prototype.otherwise = function(onRejected) {
+		return this.then(undefined, onRejected);
+	};
+    const promise = new Promise(function (res, rej) {
+      resolve = res;
+      reject = rej;
+    });
+  
+    return {
+      resolve: resolve,
+      reject: reject,
+      promise: promise,
+    };
+  }
+
 
 /**
  * A data source used to load S3M Layer.
@@ -45,15 +64,15 @@ function S3MDataSource(scene) {
  */
 S3MDataSource.prototype.load = function(url) {
 	var that = this;
-    var deferred = when.defer();
-	when(url)
+    var deferred = defer();
+	Promise.resolve(url)
 		.then(function(url) {
 			var resource = Resource.createIfNeeded(url);
 			var basePath = resource.getBaseUri(true);
 			that._url = resource.url;
 			that._basePath = basePath;
 			that._baseResource = resource;
-			return resource.fetchJson();
+			return Promise.resolve(resource.fetchJson()).catch(()=>{return resource.fetchXML()})
 		})
 		.then(function(config) {
 			var tilesetJson = {
@@ -92,8 +111,9 @@ S3MDataSource.prototype.load = function(url) {
 
 			// Bounding sphere of all tiles.
 			var allCenters = [];
-			for(var i = 0, len = config.tiles.length; i < len; i++) {
-				var bbox = config.tiles[i].boundingbox;
+			var tiles = config.tiles || config.rootTiles;
+			for(var i = 0, len = tiles.length; i < len; i++) {
+				var bbox = tiles[i].boundingbox;
 				var perMin = new Cartesian3(bbox.min.x, bbox.min.y, bbox.min.z);
 				var perMax = new Cartesian3(bbox.max.x, bbox.max.y, bbox.max.z);
 				var perSphere = BoundingSphere.fromCornerPoints(perMin, perMax, new BoundingSphere());
@@ -106,7 +126,7 @@ S3MDataSource.prototype.load = function(url) {
 						sphere: perBoundingVolume
 					},
 					content: {
-						uri: config.tiles[i].url
+						uri: tiles[i].url
 					},
 					geometricError: 70,
 					refine: "REPLACE"
@@ -165,9 +185,9 @@ S3MDataSource.prototype.load = function(url) {
 				}
 			});
             deferred.resolve(that);
-		}).otherwise(function(error) {
-        	deferred.reject(error);
-		});
+		},(error)=>{
+            deferred.reject(error);
+        })
     return deferred.promise;
 };
 
@@ -2132,10 +2152,13 @@ S3MTile.prototype.requestContent = function() {
         });
 
 	}).otherwise(function(e) {
-		tile._contentState = Cesium3DTileContentState.UNLOADED;
+		if (request.state === RequestState.CANCELLED) {
+            tile._contentState = Cesium3DTileContentState.UNLOADED;
+            return;
+        }
 	});
 
-	return false;
+	return true;
 };
 
 Cesium3DTile.prototype._resolveHookedObject = function() {
@@ -2170,11 +2193,11 @@ Cesium3DTile.prototype.requestContent = function() {
 	if(!defined(this._s3mTile)) {
 		this._s3mTile = new S3MTile(this);
 
-		this._contentReadyToProcessPromise = when.defer();
-		this._contentReadyPromise = when.defer();
+		this._contentReadyToProcessPromise = defer();
+		this._contentReadyPromise = defer();
 	}
 
-	this._s3mTile.requestContent();
+	return this._s3mTile.requestContent();
 };
 
 function S3MGLTFProcessingQueue() {
