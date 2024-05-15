@@ -10,15 +10,46 @@
     <script>
         window.Adapter = Cesium;
     </script>
-    <script src="./Build/SuperMap3D.js"></script>
 </head>
 <body>
+    <button id="skyline" style="position: absolute;top: 10px;left: 10px;z-index: 100;">天际线</button>
     <div id="SuperMap3DContainer"></div>
-    <script>
+    <script type="module">
+        // import "./Source/SuperMap3D.js" // 全局引入
+
+        import "./Source/Ext/CesiumExt.js"; // 按需引入
+        import Skyline from "./Source/Analysis/Skyline.js";
+
+        window.SUPERMAP_BASE_URL = "./Source/";
+
+        // Cesium.Ion.defaultAccessToken = '';
+       
         let viewer = new Cesium.Viewer("SuperMap3DContainer");
         let scene = viewer.scene;
+        
         // 更多范例，请参考http://support.supermap.com.cn:8090/webgl/examples/webgl/examples.html#layer
-        scene.open("http://www.supermapol.com/realspace/services/3D-CBDCache20200416/rest/realspace");
+        let promise = scene.open("http://www.supermapol.com/realspace/services/3D-CBDCache20200416/rest/realspace");
+        
+        promise.then((layers)=>{
+            // 天际线分析
+            document.getElementById('skyline').onclick = function(){
+                var skyline = new Skyline(scene);//创建天际线分析对象
+
+                var cartographic = scene.camera.positionCartographic;
+                var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                var height = cartographic.height;
+
+                //天际线分析的视口位置设置成当前相机位置
+                skyline.viewPosition = [longitude, latitude, height];
+                //设置俯仰和方向
+                skyline.pitch = Cesium.Math.toDegrees(scene.camera.pitch);
+                skyline.direction = Cesium.Math.toDegrees(scene.camera.heading);
+                skyline.radius = 10000; // 天际线分析半径设置为10000米
+                skyline.lineWidth = 2; // 天际线线宽
+                skyline.build();
+            }
+        })
     </script>
 </body>
 </html>
