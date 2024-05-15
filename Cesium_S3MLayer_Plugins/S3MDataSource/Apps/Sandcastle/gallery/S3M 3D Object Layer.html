@@ -29,7 +29,7 @@
 				var scene = viewer.scene;
 				var dataSource = new Cesium.S3MDataSource(scene);
 				
-                var promise = dataSource.load("http://www.supermapol.com/realspace/services/3D-JingJiangQX/rest/realspace/datas/Combine/config");
+        var promise = dataSource.load("http://www.supermapol.com/realspace/services/3D-JingJiangQX/rest/realspace/datas/Combine/config");
 
 				promise.then(function() {
 					scene.camera.setView({
