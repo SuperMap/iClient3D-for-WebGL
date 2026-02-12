@@ -13,6 +13,14 @@ _使用S3M DataSource加载倾斜数据_
 # 概述
 Cesium_S3MLayer_Plugins是面向CesiumJS的插件，基于此可以在CesiumJS中高效快捷地实现iClient3D for Cesium产品的部分功能。S3MTilesLayer功能全面、性能优化，S3MDataSource则轻量便捷，满足用户的各类场景需求。
 
+1、各类基础数据加载（精模，BIM，倾斜，点云（Draco点云暂不支持）
+2、地形影像加载（TIN地形、栅格地形、block影像、block地形）
+3、支持加载服务时使用token、 安全认证、多子域
+4、支持entity贴s3m模型、支持entity同时贴倾斜以及地面
+5、S3M图层设置透明度、支持查找图层、平面裁剪、压平、卷帘、id设置显隐，颜色，选中
+6、量算、绘制和编辑线面
+7、通视分析 、天际线、 视频投放
+
 
 该插件集合还在持续优化完善中，条件成熟后会逐步开源。
 
