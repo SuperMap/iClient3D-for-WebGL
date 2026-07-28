@@ -1,0 +1,474 @@
+<!--********************************************************************
+* Copyright© 2000 - 2020 SuperMap Software Co.Ltd. All rights reserved.
+*********************************************************************-->
+<nav id="nav" class="navbar navbar-static-top default">
+    <div class="nav-header">
+        <div class="navcontentfixed">
+            <div class="navbar-header">
+                <div class="navbar-title">
+                    <a class="navbar-brand" target="_self" href="{{nav.path}}./index.html">
+                        <img class="project-logo" src="{{nav.path}}img/svg/logo2.svg" style="visibility: visible;"
+                            id="logo">
+                        <span class="project-title vm" id="title">{{nav.title}}
+                            <!--<span class="pre-release" id="version">{{nav.version}}</span>-->
+                        </span>
+                    </a>
+                    <div id="suffix-title"></div>
+                </div>
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#navbar-collapse" aria-expanded="false">
+                   <img src="{{nav.path}}img/svg/navheadermenu.svg" alt="navheadermenu">
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-custom-menu" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="navbar-menu" id="home-menu">
+                        <a target="_self" href="{{nav.path}}./index.html" class="center" data-i18n="nav.home._name"></a>
+                    </li>
+
+                    <li class="navbar-menu" id="earth-menu">
+                        <a class="center" data-i18n="nav.earth._name"></a>
+
+                        <div class="menu-box">
+                            <div class="menu-sub-warp">
+                                <ul class="icl-nav-menu-box icl-nav-menu-item icl-nav-menu-earth">
+                                    <li><a class="icl-nav-menu-title" target="blank" data-i18n="nav.overview.earth"
+                                           href="http://www.supermapol.com/earth/"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+
+                    <!--webgl下拉页-->
+                    <li class="navbar-menu" id="3dwebgl-menu">
+                        <a class="center" data-i18n="nav.3dwebgl._name"></a>
+
+                        <div class="menu-box">
+                            <div class="menu-sub-warp">
+                                <ul class="icl-nav-menu-box icl-nav-menu-item icl-nav-menu-3dwebgl">
+
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.product._name" target="_self"
+                                           href="{{nav.path}}./introduction/intro_3DWebgl.html"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a target="_self" data-i18n="nav.product.introduce"
+                                                   href="{{nav.path}}./introduction/intro_3DWebgl.html#introduce"></a></li>
+                                            <li><a target="_self" data-i18n="nav.product.download"
+                                                   href="{{nav.path}}./downloads/download1.html"></a></li>
+                                            <li><a target="_self" data-i18n="nav.product.modules"
+                                                   href="{{nav.path}}./introduction/intro_3DWebgl.html#modules"></a></li>                               
+                                            <li><a target="_self" data-i18n="nav.product.license"
+                                                   href="{{nav.path}}./introduction/intro_3DWebgl.html#license"></a></li>
+                                            <li><a target="_self" data-i18n="nav.product.environment"
+                                                   href="{{nav.path}}./introduction/intro_3DWebgl.html#environment"></a></li>
+                                        </ul>
+                                    </li>
+
+
+                                        <!--新增开发指南，链接文件需要修改-->
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.guide._name" target="_self"
+                                           href="{{nav.path}}./introduction/3DforWebGL.html"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a target="_self" data-i18n="nav.guide.ready"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#Ready"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.createMap"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#createMap"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.multiProjection"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#multiProjection"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.SetScene"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#SetScene"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.Query"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#Query"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.Measure"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#Measure"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.DrawHandler"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#DrawHandler"></a>
+                                            </li>
+                                            <li><a target="_self" data-i18n="nav.guide.Analysis"
+                                                   href="{{nav.path}}./introduction/3DforWebGL.html#Analysis"></a>
+                                            </li>
+                                        </ul>
+
+                                    </li>
+                                    <!--新增开发指南结束-->
+                                    <!--新增示例-->
+                                   <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.examples._name" target="_self"
+                                           href="{{nav.path}}../examples/webgl/examples.html"></a>
+                                        <a class="icl-nav-menu-sub" data-i18n="nav.examples._subname" target="_self"
+									        href="{{nav.path}}../examples/webgl/examples.html">示范程序</a>
+                                        <!-- <ul class="icl-nav-menu-sub" id="webgl-examples-menu">
+                                        </ul> -->
+                                    </li>
+									
+									<!-- <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.examples._name" target="_self"
+                                           href="{{nav.path}}../examples/webgl/examples.html"></a>
+                                        <ul class="icl-nav-menu-sub" id="webgl-examples-menu">
+                                        </ul>
+                                    </li> -->
+                                    <!--新增示例说明结束-->
+                                    <!--原有示例链接-->
+
+                                    <!--webgl api文档下拉框-->
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.api._name" target="_self"
+                                           href="{{nav.path}}./apis/3dwebgl.html"></a>
+                                        <!--api文档dom节点增加id,用于挂载专用研发团队的帮助文档dom-->  
+                                        <ul class="icl-nav-menu-sub" id="icl-nav-menu-sub-api">
+                                            <li><a target="_blank" data-i18n="nav.api.webglDoc"
+                                                   href="{{nav.path}}../docs/Documentation/index.html"></a></li>
+                                            <!--<li><a target="_blank" data-i18n="nav.api.webglDoc_chm"-->
+                                                   <!--href="{{nav.path}}./apis/webgl_chm.html"></a></li>-->
+                                        </ul>
+                                    </li>
+                                    <!--api文档下拉框结束-->
+									
+									<li>
+									<a class="icl-nav-menu-title" data-i18n="nav.overview.APIChange" target="_self"
+                                           href="../../web/APIChange.html#APIChange"></a>
+										<ul class="icl-nav-menu-sub">
+											<li><a target="_blank" data-i18n="nav.overview.APIChange"
+                                            href="../../web/APIChange.html#APIChange"></a></li>
+											<li><a target="_blank" data-i18n="nav.overview.newAPI"
+											href="../../web/APIChange.html#newAPI"></a></li>
+										</ul>
+									</li>
+
+                                    <li>
+                                        <a class="icl-nav-menu-title" id="topi" data-i18n="nav.topic.topicDOC" target="_self"
+                                           href="{{nav.path}}../examples/TopicDOC/AttributeQueryofObliqueModel_OperateTopic.html"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a target="_blank" data-i18n="nav.topic.WebGPU"
+                                                   href="{{nav.path}}../examples/TopicDOC/HowToUseWebGPU.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.aqom"
+                                                   href="{{nav.path}}../examples/TopicDOC/AttributeQueryofObliqueModel_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.dpt"
+                                                   href="{{nav.path}}../examples/TopicDOC/DynamicPlottingTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Bofw"
+                                                   href="{{nav.path}}../examples/TopicDOC/Beatifucation and optimization common setting for 3D scene in WebGL.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.fmt"
+                                                   href="{{nav.path}}../examples/TopicDOC/FlyManagerTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.token"
+                                                   href="{{nav.path}}../examples/TopicDOC/HowToUseToken.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.BIM"
+                                                   href="{{nav.path}}../examples/TopicDOC/LoadBIM_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Gltf"
+                                                   href="{{nav.path}}../examples/TopicDOC/LoadGltfModel_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.imagery"
+                                                   href="{{nav.path}}../examples/TopicDOC/LoadImagery_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.LOM"
+                                                   href="{{nav.path}}../examples/TopicDOC/LoadObliqueModel_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.terrain"
+                                                   href="{{nav.path}}../examples/TopicDOC/LoadTerrain_OperateTopic.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.webapi"
+                                                   href="{{nav.path}}../examples/TopicDOC/Local_Deployment_and_Execution_Guide_for_Examples_in_SuperMap_iClient3D_for_WebGLWebGPU_Product_Package.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.DWG"
+                                                   href="{{nav.path}}../examples/TopicDOC/subObjectsSelectionOfPointHanging.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.thematicMap"
+                                                   href="{{nav.path}}../examples/TopicDOC/ThematicMap.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.UPBR"
+                                                   href="{{nav.path}}../examples/TopicDOC/Using Json file to modify PBR displaying effect in WebGL.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.topVue"
+                                                   href="{{nav.path}}../examples/TopicDOC/Vue&WebGLDevelopment.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.subdomains"
+                                                   href="{{nav.path}}../examples/TopicDOC/subdomains.html"></a></li>
+										    <li><a target="_blank" data-i18n="nav.topic.3Ds Max"
+                                                   href="{{nav.path}}../examples/TopicDOC/Display Problem of 3Ds Max Model.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Bentley"
+                                                   href="{{nav.path}}../examples/TopicDOC/Instruction of Export Coordinate and Model of Plugin for Bentley.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.BIM Factory"
+                                                   href="{{nav.path}}../examples/TopicDOC/Optimization on Performace and Process Method of BIM Factory.html"></a></li> 
+                                            <li><a target="_blank" data-i18n="nav.topic.Terrain to TIN"
+                                                   href="{{nav.path}}../examples/TopicDOC/Process of Large-Scale Terrain to TIN.html"></a></li> 
+                                            <li><a target="_blank" data-i18n="nav.topic.Terrain to Imagery"
+                                                   href="{{nav.path}}../examples/TopicDOC/Process of Large-Scale Terrain to Imagery.html"></a></li>  
+                                            <li><a target="_blank" data-i18n="nav.topic.Oblique Photogrammetry"
+                                                   href="{{nav.path}}../examples/TopicDOC/Process of Large-Scale Oblique Photogrammetry.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Geological Model"
+                                                   href="{{nav.path}}../examples/TopicDOC/Solutions on Geological Model.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Man-made Model"
+                                                   href="{{nav.path}}../examples/TopicDOC/Precautions And Process of Man-made Model.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.Vector Region Stretching"
+                                                   href="{{nav.path}}../examples/TopicDOC/Process and Ideas of Vector Region Stretching.html"></a></li>
+                                            <li><a target="_blank" data-i18n="nav.topic.BPOW"
+                                                   href="{{nav.path}}../examples/TopicDOC/Beautification Process of White_Box Model.html"></a></li>
+										    <li><a target="_blank" data-i18n="nav.topic.PPOCFAE"
+										           href="{{nav.path}}../examples/TopicDOC/Production Process Of Connectivity Flood Analysis Effect.html"></a></li>
+										    <li><a target="_blank" data-i18n="nav.topic.CFE"
+											       href="{{nav.path}}../examples/TopicDOC/Create Flow Effects for Pipes.html"></a></li>
+											<li><a target="_blank" data-i18n="nav.topic.GDP"
+											       href="{{nav.path}}../examples/TopicDOC/Guide to Data Processing and Visualization for Models with a Time Dimension.html"></a></li>
+											<li><a target="_blank" data-i18n="nav.topic.HST"
+											       href="{{nav.path}}../examples/TopicDOC/Optimization of 3D Hardware Configuration for SuperMap GIS.html"></a></li>
+                                        </ul>
+                                    </li>
+
+                                    <!-- 专用开发指南 -->
+                                    <li id="mgis-dev-doc">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- <li class="navbar-menu" id="more-menu">
+					 <a class="text-center" style="min-width:36px;" href="http://support.supermap.com.cn:8090/webgl/Cesium/web/index.html">iClient3D-Cesium</span></a>
+					</li> -->
+                     <!--component -->
+                    <li class="navbar-menu" id="component-menu">
+                        <a class="center" data-i18n="nav.component._name"></a>
+                        <div class="menu-box">
+                            <div class="menu-sub-warp">
+                                <ul class="icl-nav-menu-box icl-nav-menu-item icl-nav-menu-component">
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.guide._name"
+                                            href="http://support.supermap.com.cn:8090/webgl/examples/component/dist"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a target="_blank" data-i18n="nav.api.vueDocForWebgl"
+                                                    href="http://support.supermap.com.cn:8090/webgl/examples/component/dist"></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.examples._name"
+                                           href="{{nav.path}}../examples/component/examples.html"></a>
+                                        <a class="icl-nav-menu-sub" data-i18n="nav.examples._subname" target="_self"
+                                           href="{{nav.path}}../examples/component/examples.html"></a>
+                                        <ul class="icl-nav-menu-sub" id="component-examples-menu"> </ul>
+                                    </li>
+
+                                    <li>
+                                        <a class="icl-nav-menu-title" data-i18n="nav.examples.vue_3"
+                                           href="https://www.supermapol.com/earth/vue-iEarth/examples/index.html"></a>
+                                        <a class="icl-nav-menu-sub" data-i18n="nav.examples._subname" target="_blank"
+                                           href="https://www.supermapol.com/earth/vue-iEarth/examples/index.html"></a>
+                                        <ul class="icl-nav-menu-sub" id="component-examples-menu"> </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+					<!--WEBGL REPORT-->
+                    <li class="navbar-menu" id="overview-menu">
+                        <a class="center" data-i18n="nav.envreport._name"></a>
+
+                        <div class="menu-box">
+                            <div class="menu-sub-warp">
+                                <ul class="icl-nav-menu-box icl-nav-menu-item icl-nav-menu-overivew">
+									<li><a class="icl-nav-menu-title" target="_blank" data-i18n="nav.envreport._name"
+                                            href="../webglreport.html"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+					
+                    <!--more-->
+                    <!-- <li class="navbar-menu" id="more-menu">
+                        <a class="text-center" style="min-width:36px;"><span
+                                class="glyphicon glyphicon-option-vertical"></span></a>
+
+                        <div class="menu-box">
+                            <div class="menu-sub-warp">
+                                <ul class="icl-nav-menu-box icl-nav-menu-item icl-nav-menu-more">
+                                    {{if !nav.isLocal}}
+                                    <li id='versions'>
+                                        <a class="disabled icl-nav-menu-title" data-i18n="nav.more.version._name"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a target="_self" class="icl-nav-version"
+                                                href="/web/index.html">10.1.0-alpha</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/10.0.1/web/index.html">10.0.1</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/10.0.0/web/index.html">10.0.0</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/9.1.2/web/index.html">9.1.2</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/9.1.1/web/index.html">9.1.1</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/9.1.0/web/index.html">9.1.0</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/9.0.1/web/index.html">9.0.1</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/9.0.0/web/index.html">9.0.0</a></li>
+                                            <li><a target="_self" class="icl-nav-version"
+                                                    href="/dev/web/index.html">dev</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    {{/if}}
+                                    <li>
+                                        <a href="{{nav.path}}./downloads/download1.html" target="_self"
+                                            class="icl-nav-menu-title" data-i18n="nav.more.get._name"></a>
+                                        <ul class="icl-nav-menu-sub">
+                                            <li><a href="{{nav.path}}./downloads/download.html#stable"
+                                                    data-i18n="nav.more.get.stable" target="_self"></a>
+                                            </li>
+                                            <li><a href="{{nav.path}}./downloads/download.html#versions"
+                                                    data-i18n="nav.more.get.oldVersions" target="_self"></a>
+                                            </li>
+                                            <li><a href="{{nav.path}}./downloads/download.html#releases"
+                                                    data-i18n="nav.more.get.releases" target="_self"></a>
+                                            </li>
+                                            <li><a href="{{nav.path}}./downloads/download.html#source"
+                                                    data-i18n="nav.more.get.source" target="_self"></a>
+                                            </li>
+                                            <li><a href="{{nav.path}}./downloads/download.html#npm"
+                                                    data-i18n="nav.more.get.npm" target="_self"></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+								
+                            </div>
+                        </div>
+                    </li> -->
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script type="text/javascript">
+    var notFor = ['iClient Classic',  '产品概览'];
+    var identification = identification != null ? identification : undefined;
+    window.isSite = true;
+    $(document).ready(function () {
+        if (identification && identification.name) {
+            var suffixHeader = document.getElementById("suffix-title");
+            suffixHeader.innerText = (notFor.indexOf(identification.name) < 0 ?  "": "for ") ;
+        }
+        $(".icl-nav-menu-title").each(function (key, item) {
+            if ($(item).next('ul').length === 0) {
+                return;
+            }
+            $(item).css('border-bottom', '1px solid rgba(100,100,100,.2)');
+        });
+        // 判断example中的menu版本号是否与window.version相同
+        function hasNewExamples(config) {
+            var hasNewExamples = false;
+            if (config.content) {
+                a: for (var key in config.content) {
+                    var examples = config.content[key].content;
+                    if (examples) {
+                        for (var index = 0; index < examples.length; index++) {
+                            var element = examples[index];
+                            if (element.version === window.version) {
+                                hasNewExamples = true;
+                                continue a;
+                            }
+                        }
+                    }
+                }
+            }
+            return hasNewExamples;
+        }
+        // 加载example下的menu
+        function loadExamplesMenu(examplesConfig, type) {
+            var redCircle;
+            a: for (var name in examplesConfig) {
+                redCircle = '';
+                var item = examplesConfig[name];
+                if (!item) {
+                    continue;
+                }
+                if (window.isLocal && item.localIgnore) {
+                    continue;
+                }
+                // 判断是否是新特性，如果是就有小红点
+                if (hasNewExamples(item)) {
+                    redCircle = '<span class="red-circle"></span>'
+                }
+                if (item.name) {
+                    var template =
+                        '<li style="position:relative"><a target="_self" data-i18n="nav.examples.' + name +
+                        '" href="{{nav.path}}../examples/' + type + '/examples.html#' + name + '"></a>' +
+                        redCircle + '</li>';
+                    $('#' + type + '-examples-menu').append(template);
+                }
+            }
+            // mapboxgl和leaflet的示例菜单下面新增组件示例链接，跳转至对应组件示例页面
+            // if (type === "mapboxgl") {
+            //     var VueMapboxGL =
+            //         '<li style="position:relative"><a target="_self" ' +
+            //         'href = "{{nav.path}}../examples/component/examples.html#vuecomponents_mbgl" > Vue - MapboxGL </a></li > ';
+            //     var ReactMapboxGL =
+            //         '<li style="position:relative"><a target="_self" ' +
+            //         ' href="{{nav.path}}../examples/component/examples.html#reactcomponents_mbgl"> React - MapboxGL </a></li> ';
+            //     $('#' + type + '-examples-menu').append(VueMapboxGL);
+            //     $('#' + type + '-examples-menu').append(ReactMapboxGL);
+            // } else if (type === "leaflet") {
+            //     var VueLeaflet =
+            //         '<li style="position:relative"><a target="_self" ' +
+            //         ' href="{{nav.path}}../examples/component/examples.html#vuecomponents_leaflet"> Vue - Leaflet </a></li > ';
+            //     $('#' + type + '-examples-menu').append(VueLeaflet);
+            // }
+        };
+        // loadExamplesMenu(window.leafletExampleConfig, 'leaflet');
+        // loadExamplesMenu(window.openlayersExampleConfig, 'openlayers');
+        // loadExamplesMenu(window.mapboxglExampleConfig, 'mapboxgl');
+        // loadExamplesMenu(window.classicExampleConfig, 'classic');
+        loadExamplesMenu(window.componentExampleConfig, 'component');
+        loadExamplesMenu(window.webglExampleConfig, 'webgl'); //新增webgl的下拉框目录
+        $('.icl-header .navbar-menu').on("click  touchend", select);
+
+        function select(evt) {
+            $(this).siblings().removeClass('active');
+            $(this).addClass('active');
+        }
+        $(".icl-header .menu-box").on("mouseleave", function (e) {
+            e.stopPropagation();
+            $(this).parent(".navbar-menu").removeClass('active');
+            addActive();
+        });
+
+        function addActive() {
+            window.location.href.indexOf('index') > -1 && $("#home-menu").addClass('active');
+            window.location.href.indexOf('overview') > -1 && $("#overview-menu").addClass('active');
+            // window.location.href.indexOf('leaflet') > -1 && $("#leaflet-menu").addClass('active');
+            // window.location.href.indexOf('openlayers') > -1 && $("#openlayers-menu").addClass('active');
+            // window.location.href.indexOf('mapboxgl') > -1 && $("#mapboxgl-menu").addClass('active');
+            // window.location.href.indexOf('classic') > -1 && $("#classic-menu").addClass('active');
+            window.location.href.indexOf('webgl') > -1 && $("#webgl-menu").addClass('active');
+            window.location.href.indexOf('component') > -1 && $("#component-menu").addClass('active');
+        }
+        addActive();
+        if (!window.isLocal) {
+            var _hmt = _hmt || [];
+            (function () {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?c5936336652cb6060f89e17120aff244";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();
+        }
+     
+        // 不影响当前逻辑，用于专用研发团队的打包时挂载MGIS的帮助文档,如需修改请联系专用产品研发团队
+        $("#icl-nav-menu-sub-api").append("<script type='text/javascript' src='{{nav.path}}./apis/MGISConfig.js'><\/script>");
+        if(typeof addMGISAPIDOM == 'function'){
+            addMGISAPIDOM("{{nav.path}}./apis/MGIS.html");
+        }
+        
+        // 不影响当前逻辑，用于专用研发团队的打包时挂载MGIS的QA帮助文档,如需修改请联系专用产品研发团队
+        if(typeof addMGISQADOM == 'function'){
+            addMGISQADOM("{{nav.path}}../examples/TopicDOC/MGIS_QA.html");
+        }
+
+         // 不影响当前逻辑，用于专用研发团队的打包时挂载MGIS的开发指南,如需修改请联系专用产品研发团队
+         if(typeof addMGISGUIDEDOM == 'function'){
+            addMGISGUIDEDOM("{{nav.path}}./introduction/3DforWebGL_MGIS.html");
+        }
+    });
+</script>

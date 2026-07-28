@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>添加实例化</title>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <link href="./css/pretty.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="toolbar" class="param-container tool-bar">
+    <select id="selOpt" >
+      <option selected value="1">实例化图层方式加载</option>
+      <option value="2">实例化集合方式加载</option>
+    </select><br><br>
+    <button id="adds3m" class="button black" type="button">添加s3m</button>
+    <button id="adds3mb" class="button black" type="button">添加s3mb</button><br>
+    <button id="addgltf" class="button black" type="button">添加gltf</button>
+    <button id="clear" class="button black" type="button">清除所有</button><br>
+    鼠标左键添加
+  </div>
+
+  <script>
+    async function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      var viewer = new Cesium.Viewer("cesiumContainer", {
+        timeline: true,
+        animation: false,
+      });
+      var scene = viewer.scene;
+      var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({ scene: scene });
+      var suepMapScene = supermapPluginViewer.scene;
+
+      //设置相机位置、视角，便于观察场景
+      scene.camera.setView({
+        destination: new Cesium.Cartesian3.fromDegrees(116.4566, 39.9149, 100),
+        orientation: {
+          heading: 3.1612,
+          pitch: -1.0,
+          roll: 0
+        }
+      });
+
+      let collect = new SuperMapCesiumPlugin.S3MInstanceCollection(scene.context);
+      let instanceLayer = new SuperMapCesiumPlugin.InstanceLayer(scene.context);
+      suepMapScene.primitives.add(instanceLayer);
+      suepMapScene.primitives.add(collect);
+
+      let s3mUrl = './data/models/springTree.s3m';
+      let s3mbUrl = './data/models/tower.s3mb';
+      let gltfUrl = './data/models/man/walk.gltf';
+      let modelUrl = s3mUrl;
+      let instanceObj = instanceLayer;
+
+      var screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+      screenSpaceEventHandler.setInputAction(function (e) {
+        let p = scene.pickPosition(e.position);
+        if (!p) {
+          return;
+        }
+        instanceObj.add(modelUrl, {
+          position: p,
+        });
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+      $("#selOpt").change(function () {
+        var value = $(this).val();
+        instanceObj = value === "1" ? instanceLayer : collect;
+        if(value === "2"){
+          $("#addgltf").hide()  //实例化集合不支持gltf
+        }else{
+          $("#addgltf").show()
+        }
+      })
+
+      $('#adds3m').click(function () {
+        modelUrl = s3mUrl;
+      });
+      $('#adds3mb').click(function () {
+        modelUrl = s3mbUrl;
+      });
+      $('#addgltf').click(function () {
+        modelUrl = gltfUrl;
+      });
+      $('#clear').click(function () {
+        collect.removeCollection(s3mUrl);
+        collect.removeCollection(s3mbUrl);
+        collect.removeCollection(gltfUrl);
+        instanceLayer.removeAll(s3mUrl);
+        instanceLayer.removeAll(s3mbUrl);
+        instanceLayer.removeAll(gltfUrl);
+      });
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

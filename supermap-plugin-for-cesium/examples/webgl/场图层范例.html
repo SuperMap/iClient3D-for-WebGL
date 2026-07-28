@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>插件三维场图层</title>
+    <!-- 引入原生Cesium和SuperMap插件 -->
+    <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+    <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <link href="./css/pretty.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="cesiumContainer"></div>
+    <div id="loadingbar" class="spinner">
+      <div class="spinner-container container1">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container2">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container3">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+    </div>
+
+    <script>
+      function onload(Cesium, SuperMapCesiumPlugin) {
+        if (SuperMapCesiumPlugin === undefined) {
+          return;
+        }
+
+        var viewer = new Cesium.Viewer("cesiumContainer", {
+          msaaSamples : 1
+        });
+        var cesiumScene = viewer.scene;
+        cesiumScene.logarithmicDepthBuffer = true;
+        cesiumScene.globe.show = true;
+        
+      var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+        scene : cesiumScene,
+      });
+      var superMapScene = supermapPluginViewer.scene;
+
+      const fieldLayer = new SuperMapCesiumPlugin.FieldLayer3D(superMapScene); //场数据图层
+      setHypsometric(fieldLayer);
+
+      fieldLayer.particleVelocityFieldEffect.particleMode = 1;
+      //fieldLayer.particleVelocityFieldEffect.particleSize = 40;
+      fieldLayer.particleVelocityFieldEffect.horizontalDensity = 500;
+      let dataBounds = Cesium.Rectangle.fromDegrees(118.60696, 31.933451, 118.780261, 32.150184);
+      fieldLayer.layerBounds = dataBounds;
+
+      // 将场图层添加到场景中
+      cesiumScene.primitives.add(fieldLayer);
+
+      // 设置相机视角，定位到水域区域
+      cesiumScene.camera.setView({
+        destination: {
+            x: -2594398.9692613464,
+            y: 4755823.194206494,
+            z: 3360216.0783820394
+        },
+        orientation: {
+            heading: 0.7819054516945378,   // 航向角
+            pitch: -0.16842947534961894,   // 俯仰角
+            roll: 6.283182480483738        // 翻滚角
+        }
+      });
+
+      function setHypsometric(layer){
+          var hyp = new SuperMapCesiumPlugin.HypsometricSetting();
+
+       
+          let floor = 0.1;
+          let ceil = 1.6841634341693739;
+          let dx = (ceil - floor) / 5;
+          const colorTable = new SuperMapCesiumPlugin.ColorTable();
+          colorTable.insert(floor, new Cesium.Color(255 / 255, 35 / 255, 35 / 255, 1.0));
+          colorTable.insert(floor + dx, new Cesium.Color(223 / 255, 202 / 255, 67 / 255, 1.0));
+          colorTable.insert(floor + dx * 2, new Cesium.Color(116 / 255, 205 / 255, 180 / 255, 1.0));
+          colorTable.insert(floor + dx * 3, new Cesium.Color(107 / 255, 159 / 255, 204 / 255, 1.0));
+          colorTable.insert(floor + dx * 4, new Cesium.Color(107 / 255, 143 / 255, 204 / 255, 1.0));
+          
+          hyp.ColorTable = colorTable;
+          hyp.Opacity = 0.5;
+
+          hyp.LineInterval = 10.0;
+
+          //设置图层分层设色属性
+          layer.hypsometricSetting = {
+              hypsometricSetting: hyp,
+              analysisMode: SuperMapCesiumPlugin.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL
+          };
+        }
+
+        // 初始化水场数据数组
+        let particleWindField = [];        // 正向水流场数据
+        let particleWindInverseField = []; // 反向水流场数据
+
+        //加载水场数据
+        $.ajax({
+            url: './data/grid-water.json',
+            success: function (data) {
+                let p = 0;
+                // 解析网格化的水流数据
+                for (let j = 0; j < data.ny; j++) {
+                    particleWindField[j] = [];
+                    particleWindInverseField[j] = [];
+                    for (let i = 0; i < data.nx; i++, p++) {
+                        particleWindField[j][i] = data.data[p];
+                        particleWindInverseField[j][i] = [-data.data[p][0], -data.data[p][1]];
+                    }
+                }
+                $('#loadingbar').remove();
+                setTimeout(function () {
+                    fieldLayer.fieldData = particleWindField;
+                }, 3000)
+            }
+        });
+
+        $("#loadingbar").remove();
+
+      }
+      if (typeof Cesium !== "undefined") {
+        //window.startupCalled = true;
+        onload(Cesium,SuperMapCesiumPlugin);
+      }
+    </script>
+  </body>
+</html>

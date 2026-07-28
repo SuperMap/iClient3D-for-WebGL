@@ -1,0 +1,221 @@
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 2px;
+  border-radius: 10px;
+  /*这个属性设置使填充进度条时的图形为圆角*/
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -3px;
+  height: 10px;
+  width: 10px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  height: 2px;
+}
+
+input[type=text] {
+  width: 85px;
+  height: 28px;
+  background: rgba(51, 51, 51, 1);
+  border: 1px solid rgba(74, 74, 74, 1);
+  border-radius: 4px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.titleBox{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleBox .titl {
+  width: 200px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 18px;
+}
+
+.titleBox .close2 {
+  margin-bottom: 10px ;
+}
+
+.inputBox {
+  margin-bottom: 15px;
+}
+
+.inputBox .sp-dd {
+  display: none;
+}
+
+.inputBox .sp-preview {
+  height: 8px;
+  width: 200px;
+  margin-top: 4px;
+  margin-left: 3px;
+}
+
+.inputBox .sp-replacer {
+  height: 20px;
+  background-color: rgba(42, 42, 42, 1);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inputBox #img-container {
+  display: inline-block;
+  position: relative;
+}
+
+.inputBox .lab {
+  width: 110px;
+  height: 32px;
+  line-height: 32px;
+}
+
+.inputBox .content {
+  width: 180px;
+  color: #fff;
+}
+
+.inputBox input[type=radio] {
+  scale: 1.5;
+  margin: -6px 8px 0px 0px;
+  accent-color: rgba(52, 153, 229, 1);
+}
+
+.inputBox input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.inputBox .radio-box {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 7px;
+  height: 22px;
+  padding-top: 7px;
+}
+
+
+input,
+textarea,
+.uneditable-input {
+  width: 180px;
+}
+
+.bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+  width: 196px;
+}
+
+.rangeBox {
+  width: 130px;
+  margin-left: 0px;
+}
+
+.btn_foot {
+  flex: 1;
+  margin: 0 5px;
+  width: 80px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  background-color: rgba(42, 42, 42, 1);
+}
+
+.selectstyle {
+  width: 220px;
+  margin: 0px;
+}
+
+input[type="date"] {
+  background-color: #333;
+  border: 1px solid rgba(74, 74, 74, 1);
+  color: #fff;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url('../images/iconTip/down.png');
+  background-size: 16px;
+  padding-right: 2px;
+}
+
+.bubble-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 240px;
+  height: 200px;
+  background-color: #383838;
+  color: #fff;
+  padding: 10px;
+}
+
+.bubble-container .displayText {
+  color: #ffffff;
+  width: 150px;
+  margin-left: -10px;
+}
+
+.twipsy-inner p {
+  margin: 0px;
+}
+
+/* 图例 */
+.tool-bar{
+  left: 1268px;
+  top: 400px;
+  width: 200px;
+}
+
+.band4{
+  /* background:-webkit-linear-gradient(left,rgb(139,139,149) 1%,rgb(187,189,237) 20%, rgb(0,255,255) 40%, rgb(255,255,0) 60%, rgb(255,0,0)) !important */
+  background:-webkit-linear-gradient(left,rgba(0,0,255,1) 0%,rgba(0,0,255,1) 20%, rgba(0,255,255,1) 40%, rgba(255,255,0,1) 60%, rgba(255,0,0,1)) !important;
+}
+
+#color-legend{
+  width: 20px;
+  height: 100px;
+  /* background:-webkit-linear-gradient(bottom,rgb(139,139,149) 1%,rgb(187,189,237) 20%, rgb(0,255,255) 40%, rgb(255,255,0) 60%, rgb(255,0,0)) !important */
+  /* background:-webkit-linear-gradient(bottom,rgb(0,39,148), rgb(149,232,249)) !important */
+  background:-webkit-linear-gradient(bottom,rgba(0,0,255,1) 0%,rgba(0,0,255,1) 20%, rgba(0,255,255,1) 40%, rgba(255,255,0,1) 60%, rgba(255,0,0,1)) !important;
+}
+
+.color-legend-label{
+  white-space: nowrap;
+  padding: 0 7px;
+  font-size: 12px;
+  line-height: 1em;
+  position: relative;
+  margin-left: 30px;
+  margin-top: 5px;
+  top: 10px;
+}
+
+.color-legend-label:before{
+  content: "";
+  border: 3px solid #0000;
+  border-left-width: 0;
+  border-right: 4px solid #fff;
+  width: 0;
+  height: 0;
+  display: block;
+  position: absolute;
+  top: 4px;
+  right: 100%;
+}
+
+.legend-toolbar{
+  /* background: yellow; */
+  background-color: rgba(42, 42, 42, 1);
+  color: rgba(255, 255, 255, 1);
+  position: fixed;
+  right: 15px;
+  bottom: 70px;
+  padding: 10px;
+}

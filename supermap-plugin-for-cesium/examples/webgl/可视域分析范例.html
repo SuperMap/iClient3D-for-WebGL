@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <title>插件可视域分析</title>
+    <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+    <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+    <script src="./js/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <div id="cesiumContainer"></div>
+    <div id="loadingbar" class="spinner">
+      <div class="spinner-container container1">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container2">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container3">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+    </div>
+
+    <div id="toolbar" class="param-container tool-bar">
+      <div class="param-item">
+        <button type="button" id="drawViewshed" class="button black">绘制可视域</button>
+        <button type="button" id="removeViewshed" class="button black">清除</button>
+        <br />
+      </div>
+    </div>
+
+    <script>
+      function onload(Cesium, SuperMapCesiumPlugin) {
+        if (SuperMapCesiumPlugin === undefined) {
+          return;
+        }
+
+        var viewer = new Cesium.Viewer("cesiumContainer", {
+          // terrainProvider: new SuperMapCesiumPlugin.SuperMapTerrainProvider({
+          //      url :"http://localhost:8090/iserver/services/3D-local3DCache-sichuan/rest/realspace/datas/sichuan",
+          //      //url : "http://localhost:8090/iserver/services/3D-local3DCache-terrain2/rest/realspace/datas/srtm_54_07@zhufeng",
+          //     isSct: true,//地形服务源自SuperMap iServer发布时需设置isSct为true
+          //     invisibility: true
+          // }),
+        });
+        var cesiumScene = viewer.scene;
+        cesiumScene.logarithmicDepthBuffer = true;
+        cesiumScene.globe.show = true;
+
+        var url = "http://localhost:8090/iserver/services/3D-S3M_withAttribute/rest/realspace";
+        var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+          scene : cesiumScene
+        });
+        var suepMapScene = supermapPluginViewer.scene;
+       const openScenePromise = suepMapScene.open(url);
+
+        openScenePromise.then((layers) => {
+          layers.forEach((layer) => {
+
+          });
+        });
+
+        // var tiles3Durl = "http://localhost:8090/iserver/services/3D-ThreeDTilesCache-tileset_whole/rest/realspace/datas/tileset_whole/config";
+        // Cesium.Cesium3DTileset.fromUrl(tiles3Durl, {
+        //     //debugShowBoundingVolume: true,
+        //     isSuperMapiServer: true,
+        // }).then((tileset) => {
+        //   cesiumScene.primitives.add(tileset);
+        //   viewer.zoomTo(tileset);
+        // });
+
+
+        let drawingViewshed = false;
+        let clickTimes = 0;
+        let startPosition;
+        let endPositon;
+        let viewShed = null;
+
+        var screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(cesiumScene.canvas);
+
+        screenSpaceEventHandler.setInputAction(function (e) {
+          if(!drawingViewshed) {
+            return;
+          }
+          clickTimes++;
+          if(clickTimes == 1) {
+            startPosition = cesiumScene.pickPosition(e.position) //鼠标点击一次获取开始坐标
+          }
+          else if(clickTimes == 2) {
+            clickTimes = 0;
+            endPositon = cesiumScene.pickPosition(e.position) //鼠标点击一次获取开始坐标
+            if(viewShed) {
+              viewShed.clear();
+            }
+            else {
+              viewShed = new SuperMapCesiumPlugin.ViewShed3D(cesiumScene);
+            }
+
+            // 将获取的点的位置转化成经纬度
+            var cartographic = Cesium.Cartographic.fromCartesian(startPosition);
+            var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+            var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+            var height = cartographic.height;
+            viewShed.viewPosition = [longitude, latitude, height];
+
+            var distance = Cesium.Cartesian3.distance(startPosition, endPositon);
+            if (distance > 0) {
+                // 将鼠标当前点坐标转化成经纬度
+                var cartographic = Cesium.Cartographic.fromCartesian(endPositon);
+                var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                var height = cartographic.height;
+                // 通过该点设置可视域分析对象的距离及方向
+                viewShed.setDistDirByPoint([longitude, latitude, height]);
+            }
+            viewShed.build();
+
+            drawingViewshed = false;
+          }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        $("#drawViewshed").on("click", function () {
+          drawingViewshed = true;
+        });
+
+        $("#removeViewshed").on("click", function () {
+          if(viewShed) {
+            viewShed.clear();
+          }
+        });
+
+        $("#loadingbar").remove();
+
+      }
+      if (typeof Cesium !== "undefined") {
+        //window.startupCalled = true;
+        onload(Cesium,SuperMapCesiumPlugin);
+      }
+    </script>
+  </body>
+</html>

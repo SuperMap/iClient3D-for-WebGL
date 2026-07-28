@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>新架构插件-ESM</title>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+
+  <style>
+    html,
+    body,
+    #Container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+    }
+    #toolbar{
+        position: absolute;
+        left: 2rem;
+        top: 2rem;
+        width:  15rem;
+        height: 10rem;
+        background-color: antiquewhite;
+    }
+    .func{
+        width:  15rem;
+        height: 4rem;
+        background-color: aliceblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="Container"></div>
+  <div id="toolbar">
+    <div class="func">
+        <button class="foo" type="button" id="addMap">addMap</button>
+        <button class="foo" type="button" id="removeMap">removeMap</button>
+    </div>
+  
+</div>
+  <script>
+    function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      const viewer = new Cesium.Viewer("Container", {});
+      const scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+
+      //全局变量
+      //用于添加超图提供的接口类
+      var iViewer = new SuperMapCesiumPlugin.CesiumViewer({scene});
+      var iScene = iViewer.scene;
+      var iMvtMap;
+      var url = "http://192.168.30.63:9010/sl/wmts";
+   
+      function loadMvt(superMapScene, mvtUrl){
+        return superMapScene.addVectorTilesMap({
+          // localFontFamily : true, //style.json不带字体资源时设置。带字体资源不设置
+          url: url,
+          styleName : "stylez.sl07301", //http://192.168.30.63:9010/sl/ 页面GetStyle操作不带参数的返回结果
+          tilematrixset : "sl07301_Matrix_0",//见http://192.168.30.63:9010/sl/ 服务预览操作请求的瓦片地址
+          layer : "sl07301",//见http://192.168.30.63:9010/sl/ 服务预览操作请求的瓦片地址
+          format : "pbf",
+          // minimumLevel : 8, //限定source的最小层级(可以让层级小于8的数据不显示)
+          // maximumLevel : 14,//限定source的最大层级(不可以让层级大于14的层级不显示，mapbox显示大于14层级的瓦片时会用14层级的瓦片数据)
+          canvasWidth: 1024,
+          name: 'testMVT'
+        });
+      }
+
+      function removeMap(superMapScene){
+        superMapScene.removeVectorTilesMap("testMVT");
+      }
+
+      function locateMvt(mvtMap){
+        var layerReadyPromise = mvtMap.readyPromise;
+        layerReadyPromise.then(function(data){
+          var bounds = mvtMap.rectangle;
+          scene.camera.setView({
+              destination: new Cesium.Cartesian3.fromRadians((bounds.east + bounds.west) * 0.5, (bounds.north + bounds.south) *
+                  0.5, 50000), //高度视数据而定
+              orientation: {
+                  heading: 0,
+                  roll: 0
+              }
+          });
+        });
+      }
+    
+      $("#addMap").on("click", function () {
+        $("#loadingbar").remove();
+        iMvtMap = loadMvt(iScene, mvtUrl);
+        locateMvt(iMvtMap);
+      });
+
+      $("#removeMap").on("click", function () {
+         removeMap(iScene);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("加载成功");
+      if (typeof Cesium !== "undefined") {
+        onload(Cesium, SuperMapCesiumPlugin);
+      }
+    })
+  </script>
+</body>
+
+</html>

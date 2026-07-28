@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>新架构插件-ESM</title>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+
+  <style>
+    html,
+    body,
+    #Container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="Container"></div>
+  <div class="toolbar">
+    <button id="distance">测量距离</button>
+    <button id="area">测量面积</button>
+    <button id="height">测量高度</button>
+    <button id="angle">测量角度</button>
+    <button id="clear">清除</button>
+  </div>
+  <script>
+    function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      const viewer = new Cesium.Viewer("Container", {});
+      window.viewer = viewer;
+      const scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+      scene.globe.show = true;
+
+      const supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+        scene: scene,
+      });
+      const suepMapScene = supermapPluginViewer.scene;
+      window.supermapPluginViewer = supermapPluginViewer;
+
+      // 打开场景
+      const promise = suepMapScene.open("http://172.16.120.191:8090/iserver/services/3D-CBDCache20200416/rest/realspace");
+      promise.then(layers => {
+        console.log(layers);
+      })
+
+      const clampMode = 0;
+
+      // 测量距离
+      const handlerDis = new SuperMapCesiumPlugin.MeasureHandler(viewer, SuperMapCesiumPlugin.MeasureMode.Distance, clampMode);
+      window.handlerDis = handlerDis;
+      handlerDis.keepPreviousResults = true;
+      handlerDis.measureEvt.addEventListener(function (result) {
+        var dis = Number(result.distance);
+        var distance = dis > 1000 ? (dis / 1000).toFixed(2) + 'km' : dis.toFixed(2) + 'm';
+        handlerDis.disLabel.text = '距离:' + distance;
+
+      });
+      handlerDis.activeEvt.addEventListener(function (isActive) {
+        activeMouse(isActive)
+      });
+
+
+      // 测量面积
+      const handlerArea = new SuperMapCesiumPlugin.MeasureHandler(viewer, SuperMapCesiumPlugin.MeasureMode.Area, clampMode);
+      window.handlerArea = handlerArea;
+      handlerArea.keepPreviousResults = true;
+      handlerArea.measureEvt.addEventListener(function (result) {
+        var mj = Number(result.area);
+        var area = mj > 1000000 ? (mj / 1000000).toFixed(2) + 'km²' : mj.toFixed(2) + '㎡'
+        handlerArea.areaLabel.text = '面积:' + area;
+      });
+      handlerArea.activeEvt.addEventListener(function (isActive) {
+        activeMouse(isActive)
+      });
+
+      // 测量高度
+      const handlerHeight = new SuperMapCesiumPlugin.MeasureHandler(viewer, SuperMapCesiumPlugin.MeasureMode.DVH, clampMode);
+      window.handlerHeight = handlerHeight;
+      handlerHeight.keepPreviousResults = true;
+      handlerHeight.measureEvt.addEventListener(function (result) {
+        var distance = result.distance > 1000 ? (result.distance / 1000).toFixed(2) + 'km' : result.distance + 'm';
+        var vHeight = result.verticalHeight > 1000 ? (result.verticalHeight / 1000).toFixed(2) + 'km' : result.verticalHeight + 'm';
+        var hDistance = result.horizontalDistance > 1000 ? (result.horizontalDistance / 1000).toFixed(2) + 'km' : result.horizontalDistance + 'm';
+        handlerHeight.disLabel.text = '空间距离:' + distance;
+        handlerHeight.vLabel.text = '垂直高度:' + vHeight;
+        handlerHeight.hLabel.text = '水平距离:' + hDistance;
+      });
+      handlerHeight.activeEvt.addEventListener(function (isActive) {
+        activeMouse(isActive)
+      });
+
+      // 测量角度
+      handlerAngle = new SuperMapCesiumPlugin.MeasureHandler(viewer, SuperMapCesiumPlugin.MeasureMode.Angle, clampMode);
+      window.handlerAngle = handlerAngle;
+      handlerAngle.keepPreviousResults = true;
+      handlerAngle.measureEvt.addEventListener(function (result) {
+        const azimuth = Number(result.azimuth).toFixed(2);
+        const pitch = Number(result.pitch).toFixed(2);
+        handlerAngle.angleLabel.text = `方位角：${azimuth}° \n俯仰角：${pitch}°`;
+      });
+      handlerAngle.activeEvt.addEventListener(function (isActive) {
+        activeMouse(isActive)
+      });
+
+      function activeMouse(isActive) {
+        if (isActive == true) {
+          viewer.enableCursorStyle = false;
+          viewer._element.style.cursor = '';
+          $('body').removeClass('measureCur').addClass('measureCur');
+        }
+        else {
+          viewer.enableCursorStyle = true;
+          $('body').removeClass('measureCur');
+        }
+      }
+
+
+      document.getElementById("distance").onclick = function () {
+        handlerDis.activate();
+      }
+      document.getElementById("area").onclick = function () {
+        handlerArea.activate();
+      }
+      document.getElementById("height").onclick = function () {
+        handlerHeight.activate();
+      }
+      document.getElementById("angle").onclick = function () {
+        handlerAngle.activate();
+      }
+      document.getElementById("clear").onclick = function () {
+        handlerDis && handlerDis.clear();
+        handlerArea && handlerArea.clear();
+        handlerHeight && handlerHeight.clear();
+        handlerAngle && handlerAngle.clear();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("加载成功");
+      if (typeof Cesium !== "undefined") {
+        onload(Cesium, SuperMapCesiumPlugin);
+      }
+    })
+  </script>
+</body>
+
+</html>

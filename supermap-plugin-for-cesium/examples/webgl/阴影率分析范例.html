@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>阴影分析</title>
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
+	<link href="./css/pretty.css" rel="stylesheet">
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/tooltip.js"></script>
+	<script src="./js/config.js"></script>
+	<link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+    <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+	<style>
+		#shadowRadioBox {
+			display: none;
+			position: fixed;
+			right: 8px;
+			bottom: 8px;
+			background-color: #ffffe0;
+
+		}
+
+		#shadowRadioBox caption {
+			background-color: #ffffe0;
+		}
+
+		#shadowRadioBox td {
+			padding-left: 8px;
+			padding-right: 8px;
+			height: 20px;
+		}
+
+		#shadowRadioBox tr {
+			height: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="Container"></div>
+	<div id='loadingbar' class="spinner">
+		<div class="spinner-container container1">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
+		<div class="spinner-container container2">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
+		<div class="spinner-container container3">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
+	</div>
+	<div id='toolbar' class="param-container tool-bar">
+		<div class="param-item">
+			<b>日期选择：</b>
+			<input id="selDate" type="date" value="2017-05-13" />
+		</div>
+		<div class="param-item">
+			<b>开始时间：</b>
+			<select id="startTime" class="form-control">
+				<option value="0">0:00</option>
+				<option value="2">2:00</option>
+				<option value="4">4:00</option>
+				<option value="6">6:00</option>
+				<option value="8">8:00</option>
+				<option value="10" selected>10:00</option>
+				<option value="12">12:00</option>
+				<option value="14">14:00</option>
+				<option value="16">16:00</option>
+				<option value="18">18:00</option>
+				<option value="20">20:00</option>
+				<option value="22">22:00</option>
+			</select>
+		</div>
+		<div class="param-item">
+			<b>结束时间：</b>
+			<select id="endTime" class="form-control">
+				<option value="2">2:00</option>
+				<option value="4">4:00</option>
+				<option value="6">6:00</option>
+				<option value="8">8:00</option>
+				<option value="10">10:00</option>
+				<option value="12" selected>12:00</option>
+				<option value="14">14:00</option>
+				<option value="16">16:00</option>
+				<option value="18">18:00</option>
+				<option value="20">20:00</option>
+				<option value="22">22:00</option>
+				<option value="24">24:00</option>
+			</select>
+		</div>
+		<div class="param-item">
+			<b>底部高程：</b>
+			<input id="bottomHeight" value="20" />
+		</div>
+		<div class="param-item">
+			<b>拉伸高度：</b>
+			<input id="extrudeHeight" value="20" />
+		</div>
+		<div class="param-item">
+			<button type="button" id="shadowAnalysis" class="button black">阴影分析</button>
+			<button type="button" id="sunlight" class="button black">日照效果</button>
+			<button type="button" id="clear" class="button black">清除</button>
+			<button type="button" id="shadowRadio" class="button black">获取阴影率</button>
+		</div>
+		<div id="shadowRadioBox">
+			<table style="color:#000">
+				<caption id="title"><b>采光率窗口</b></caption>
+				<tr>
+					<td><b>采光率：</b></td>
+					<td><input type="text" id="shadowRadioText" class="displayText" readonly /></td>
+				</tr>
+				<tr>
+					<td><b>经度：</b></td>
+					<td><input type="text" id="longitudeText" readonly class="displayText"></td>
+				</tr>
+				<tr>
+					<td><b>纬度：</b></td>
+					<td><input type="text" id="latitudeText" readonly class="displayText"></td>
+				</tr>
+				<tr>
+					<td><b>高程：</b></td>
+					<td><input type="text" id="heightText" readonly class="displayText"></td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function onload(Cesium) {
+			var viewer = new Cesium.Viewer('Container', {
+				baseLayerPicker: false,
+				baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+					Cesium.SingleTileImageryProvider.fromUrl(Cesium.buildModuleUrl('Assets/Textures/GlobalBkLayer.jpg'))
+				),
+				timeline: true,
+				animation: true,
+				shadows: true,
+			});
+
+			init(Cesium, SuperMapCesiumPlugin, viewer);
+		}
+
+		function init(Cesium, SuperMapCesiumPlugin, viewer) {
+			var cesiumScene = viewer.scene;
+			cesiumScene.logarithmicDepthBuffer = true;
+			cesiumScene.globe.show = true;
+			cesiumScene.skyBox.show = true;
+			cesiumScene.sun.show = true;
+			cesiumScene.debugShowFramesPerSecond = true;
+			const supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+				scene: cesiumScene,
+			});
+
+			cesiumScene.globe.depthTestAgainstTerrain = true;
+			//鼠标样式
+			viewer.enableCursorStyle = false;
+			viewer._element.style.cursor = '';
+			$('body').removeClass('drawCur').addClass('drawCur');
+			var tooltip = createTooltip(viewer._element);
+			var widget = viewer.Widget;
+			try {
+				const supeMapScene = supermapPluginViewer.scene;
+				var promise = supeMapScene.open(URL_CONFIG.SCENE_CBD);
+				Promise.resolve(promise).then(function (layers) {
+					var waterLayer = supeMapScene.layers.find('Lake@CBD');
+					// 设置水面参数
+					// waterLayer.waterSpeed = 0.5;
+					// waterLayer.waterWaveScale = 0.5;
+					for (var i = 0; i < layers.length; i++) {
+						layers[i]._instance.selectEnabled = false;
+						layers[i]._instance.shadowType = 2;
+					}
+					//设置相机位置、视角，便于观察场景
+					cesiumScene.camera.setView({
+						destination: Cesium.Cartesian3.fromDegrees(116.4491, 39.9011, 180),
+						orientation: {
+							heading: 0.0912,
+							pitch: -0.3177,
+							roll: 0
+						}
+					});
+					if (!cesiumScene.pickPositionSupported) {
+						alert('不支持拾取');
+						return;
+					}
+
+					//创建阴影查询对象
+					var shadowQuery = new SuperMapCesiumPlugin.ShadowQueryPoints(cesiumScene);
+					shadowQuery.build();
+					setCurrentTime();
+
+					var tooltip = createTooltip(document.body);
+
+					var handlerPolygon = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Polygon, 0);
+					
+					handlerPolygon.activeEvt.addEventListener(function (isActive) {
+						if (isActive == true) {
+							viewer.enableCursorStyle = false;
+							viewer._element.style.cursor = '';
+							$('body').removeClass('drawCur').addClass('drawCur');
+						}
+						else {
+							viewer.enableCursorStyle = true;
+							$('body').removeClass('drawCur');
+						}
+					});
+					var points = [];
+					var markedPoints = [];
+					handlerPolygon.drawEvt.addEventListener(function (result) {
+						tooltip.setVisible(false);
+						points.length = 0;
+						var polygon = result.object;
+						if (!polygon) {
+							return;
+						}
+						polygon.show = false;
+						handlerPolygon._instance.polyline.show = false;
+						var positions = [].concat(polygon.positions);
+						positions = Cesium.arrayRemoveDuplicates(positions, Cesium.Cartesian3.equalsEpsilon);
+
+						//遍历多边形，取出所有点
+						for (var i = 0, len = positions.length; i < len; i++) {
+							//转化为经纬度，并加入至临时数组
+							var cartographic = Cesium.Cartographic.fromCartesian(polygon.positions[i]);
+							var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+							var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+							points.push(longitude);
+							points.push(latitude);
+						}
+						//设置分析对象的开始结束时间
+						var dateValue = $("#selDate").val();
+						var startTime = new Date(dateValue);
+						startTime.setHours(Number($("#startTime :selected").val()));
+						shadowQuery.startTime = Cesium.JulianDate.fromDate(startTime);
+
+						var endTime = new Date(dateValue);
+						endTime.setHours(Number($("#endTime :selected").val()));
+						shadowQuery.endTime = Cesium.JulianDate.fromDate(endTime);
+
+						//设置当前时间
+						setCurrentTime();
+
+						shadowQuery.spacing = 10;
+						shadowQuery.timeInterval = 60;
+
+						//设置分析区域、底部高程和拉伸高度
+						var bh = Number($('#bottomHeight').val());
+						var eh = Number($('#extrudeHeight').val());
+
+						shadowQuery.qureyRegion({
+							position: points,
+							bottom: bh,
+							extend: eh
+						});
+						shadowQuery.build()
+					});
+
+					function clearmarkedPoints() {
+						for (let i = 0; i < markedPoints.length; i++) {
+							viewer.entities.remove(markedPoints[i]);
+						}
+						markedPoints.length = 0;
+					}
+
+					function setCurrentTime() {
+						var endTime = new Date($("#selDate").val());
+						endTime.setHours(Number($("#endTime :selected").val()));
+						viewer.clock.currentTime = Cesium.JulianDate.fromDate(endTime);
+						viewer.clock.multiplier = 1;
+						viewer.clock.shouldAnimate = true;
+					}
+
+					$('#shadowRadio').click(function () {
+
+						$('#shadowRadioBox').css('display', 'block');
+						$('#shadowRadioText').val('');
+						$('#longitudeText').val('');
+						$('#latitudeText').val('');
+						$('#heightText').val('');
+
+						var handler = new Cesium.ScreenSpaceEventHandler(cesiumScene.canvas);
+						handler.setInputAction(function (e) {
+							clearmarkedPoints();
+
+							var position1 = cesiumScene.pickPosition(e.position);
+							var cartographic = Cesium.Cartographic.fromCartesian(position1);
+							shadowQuery.getShadowRadioAsync(cartographic).then((shadowRadio) => {
+								var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+								var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+								var height = cartographic.height;
+
+								if (shadowRadio != -1) {
+									$('#shadowRadioText').val(shadowRadio);
+									$('#longitudeText').val(longitude);
+									$('#latitudeText').val(latitude);
+									$('#heightText').val(height);
+
+
+									var markedPoint = viewer.entities.add(new Cesium.Entity({
+										point: new Cesium.PointGraphics({
+											color: new Cesium.Color(1, 1, 0, 0.5),
+											pixelSize: 15
+
+										}),
+										position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height + 0.5)
+									}));
+									markedPoints.push(markedPoint);
+								}
+								else {
+									$('#shadowRadioText').val('');
+									$('#longitudeText').val('');
+									$('#latitudeText').val('');
+									$('#heightText').val('');
+								}
+							})
+						}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+					});
+
+					$('#shadowAnalysis').click(function () {
+						handlerPolygon.deactivate();
+						handlerPolygon.activate();
+					});
+
+					$('#sunlight').click(function () {
+						var dateVal = $("#selDate").val();
+						var startTime = new Date(dateVal);
+						var endTime = new Date(dateVal);
+						var shour = Number($("#startTime :selected").val());
+						var ehour = Number($("#endTime :selected").val());
+
+						if (shour > ehour) {
+							return;
+						}
+						var nTimer = 0.0;
+						var nIntervId = setInterval(function () {
+							if (shour < ehour) {
+								startTime.setHours(shour);
+								startTime.setMinutes(nTimer);
+								viewer.clock.currentTime = Cesium.JulianDate.fromDate(startTime);
+								nTimer += 10.0;
+								if (nTimer > 60.0) {
+									shour += 1.0;
+									nTimer = 0.0;
+								}
+							} else {
+								clearInterval(nIntervId);
+							}
+						}, 20);
+
+					});
+
+
+					$('#clear').click(function () {
+						clearmarkedPoints();
+						handlerPolygon.deactivate();
+						if (handlerPolygon.polygon) handlerPolygon.polygon.show = false;
+						if (handlerPolygon.polyline) handlerPolygon.polyline.show = false;
+						$('#shadowRadioBox').css('display', 'none');
+						shadowQuery.clear();
+						points.length = 0;
+					});
+
+					$('#startTime').change(function () {
+						var startTime = new Date($("#selDate").val());
+						startTime.setHours(Number($(this).val()));
+						shadowQuery.startTime = Cesium.JulianDate.fromDate(startTime);
+					});
+
+					$('#endTime').change(function () {
+						var endTime = new Date($("#selDate").val());
+						endTime.setHours(Number($(this).val()));
+						shadowQuery.endTime = Cesium.JulianDate.fromDate(endTime);
+						setCurrentTime();
+					});
+
+					$('#bottomHeight').change(function () {
+						var bh = Number($(this).val());
+						var eh = Number($('#extrudeHeight').val());
+						shadowQuery.qureyRegion({
+							position: points,
+							bottom: bh,
+							extend: eh
+						});
+					});
+
+					$('#extrudeHeight').change(function () {
+						var bh = Number($('#bottomHeight').val());
+						var eh = Number($(this).val());
+						shadowQuery.qureyRegion({
+							position: points,
+							bottom: bh,
+							extend: eh
+						});
+					});
+				});
+			} catch (e) {
+				if (widget._showRenderLoopErrors) {
+					var title = '渲染时发生错误，已停止渲染。';
+					widget.showErrorPanel(title, undefined, e);
+				}
+			}
+
+			$('#loadingbar').remove();
+			$("#toolbar").show();
+			$("#wrapper").show();
+
+		}
+		if (typeof Cesium !== 'undefined') {
+			window.startupCalled = true;
+			onload(Cesium,SuperMapCesiumPlugin);
+		}
+	</script>
+</body>
+
+</html>

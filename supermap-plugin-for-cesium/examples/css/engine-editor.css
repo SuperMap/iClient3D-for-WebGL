@@ -1,0 +1,52 @@
+/* <!-- 引擎切换样式 --> */
+#containerExpandEdit {
+    font-size: 14px;
+    color: #FFFFFF;
+    font-family: "Microsoft Yahei";
+    background-color: #282828;
+    height: 40px;
+    line-height: 40px;
+    display: none;
+}
+
+#containerExpandEdit>.lable {
+    margin-left: 18px;
+}
+
+#contianerFoldEdit {
+    display: block;
+    background-color: #282828;
+    height: 40px;
+}
+
+#engineChangeDOMEdit {
+    display: inline;
+    /* line-height: 55px; */
+}
+
+#engineChangeDOMEdit>.engineSelect {
+    font-size: 14px;
+    color: rgba(240, 189, 62, 1);
+    font-family: "Microsoft Yahei";
+    background-color: #282828;
+    border: none;
+    outline: none;
+    /* margin-bottom: 5px; */
+}
+
+#iconDomEdit {
+    margin-left: -14px;
+    color: rgba(240, 189, 62, 1);
+}
+
+#hotPointEdit {
+    position: relative;
+    top: -45px;
+    left: 39px;
+    /* display: inline-block; */
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(225, 77, 87, 1);
+    margin-right: 5px;
+}

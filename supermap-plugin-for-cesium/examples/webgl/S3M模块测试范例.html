@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>插件S3M模块功能测试</title>
+  <link href="./css/pretty.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <script src="./js/config.js"></script>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+
+  <div id="toolbar" class="param-container tool-bar">
+    <div class="param-item">
+      <span class="titl">添加图层</span>
+      <select id="dataType" class="supermap3d-button" style="width: 100px"></select>
+    </div>
+    <button id="style" class="button black" type="button">风格</button>
+    <button id="styleClear" class="button black" type="button">风格清除</button><br>
+    <button id="flatten" class="button black" type="button">压平</button>
+    <button id="flattenClear" class="button black" type="button">清除压平</button><br>
+    <button id="dig" class="button black" type="button">开挖</button>
+    <button id="digClear" class="button black" type="button">清除开挖</button><br>
+    <button id="offset" class="button black" type="button">选中偏移</button>
+    <button id="offsetClear" class="button black" type="button">清除偏移</button><br>
+    <button id="flyCircle" class="button black" type="button">环视</button>
+    <button id="reverse" class="button black" type="button">反向</button>
+    <button id="speed" class="button black" type="button">变速</button>
+    <button id="flyCircleClear" class="button black" type="button">清除</button><br>
+    <span type="button" id="play" class="button black">飞行开始</span>
+    <span type="button" id="pause" class="button black">暂停</span>
+    <span type="button" id="stop" class="button black">停止</span>
+    <div style="width: 150px;">
+      <select id="stopList" class="form-control" style="width: 100%;">
+      </select>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="show-line" checked> 显示飞行路线
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="show-stop" checked> 显示飞行站点
+      </label>
+    </div>
+    <br>
+    <!-- <button id="add" class="button black" type="button">添加地质体</button>
+    <button id="profile" class="button black" type="button">剖切</button>
+    <button id="clear" class="button black" type="button">清除</button><br>
+    <button id="clip" class="button black" type="button">裁剪</button>
+    <button id="dig2" class="button black" type="button">开挖</button>
+    <button id="clearClip" class="button black" type="button">清除</button><br> -->
+
+    <button id="hyp" class="button black" type="button">分层设色</button>
+    <button id="hypClear" class="button black" type="button">清除</button><br>
+
+    <button id="modifyClip" class="button black" type="button">多边形裁剪</button>
+    <button id="planeClip" class="button black" type="button">平面裁剪</button>
+    <button id="boxClip" class="button black" type="button">box裁剪</button><br>
+    <button id="crossClip" class="button black" type="button">cross裁剪</button>
+    <button id="clearClip" class="button black" type="button">清除裁剪</button>
+
+  </div>
+
+  <script>
+    async function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+      console.log(SuperMapCesiumPlugin)
+
+      var viewer = new Cesium.Viewer("cesiumContainer");
+      var scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+      scene.globe.show = true;
+
+      var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({ scene: scene });
+      var suepMapScene = supermapPluginViewer.scene;
+
+      // 数据加载      
+      var dataUrls = [
+        {
+          name: '无',
+          url: ''
+        },
+        {
+          name: '四川地形影像',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-dixingyingxiang/rest/realspace'
+        },
+        {
+          name: 'cbd精模',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-CBD/rest/realspace'
+        },
+        {
+          name: '平面场景',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-QXplan/rest/realspace'
+        },
+        {
+          name: '白膜',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-CQmodel_wireframe_2000/rest/realspace'
+        },
+        {
+          name: 'BIM',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-BIMbuilding/rest/realspace'
+        },
+        {
+          name: '倾斜',
+          url: 'http://172.16.120.103:8090/iserver/services/3D-JinJiangS3MB/rest/realspace'
+        },
+        {
+          name: '高斯',
+          url: 'http://localhost:8090/iserver/services/3D-GaoSi/rest/realspace'
+        }
+      ]
+
+
+      dataUrls.forEach((key, index) => {
+        $("#dataType").append(`<option value="${key.url}">${key.name}</option>`)
+      })
+
+
+      $('#dataType').change(async function () {
+        layers = await suepMapScene.open($(this).val());
+        console.log(layers)
+        layer = suepMapScene.layers.find("Building@CBD") || layers[0]
+
+
+      })
+
+      $('#dataType').val(dataUrls[2].url).trigger('change'); //默认加载cbd
+
+
+
+      //选中
+      var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+      handler.setInputAction(function (e) {
+        let obj = scene.pick(e.position);
+        let pos = scene.pickPosition(e.position);
+        // let obj = suepMapScene.pick(e.position); //不支持
+        console.log(':', pos)
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+      $('#style').click(function () {
+        // 风格
+        layers.forEach((layer) => {
+          layer.style3D.fillForeColor = Cesium.Color.RED;
+          // layer.style3D.fillStyle = SuperMapCesiumPlugin.FillStyle.Fill;
+          // layer.style3D.bottomAltitude = 100;
+        })
+      })
+      $('#styleClear').click(function () {
+        layers.forEach((layer) => {
+          layer.style3D.fillForeColor = Cesium.Color.WHITE;
+          // layer.style3D.fillStyle = SuperMapCesiumPlugin.FillStyle.Fill;
+          // layer.style3D.bottomAltitude = 0;
+        })
+      })
+
+
+
+      // 开挖 压平
+      // var handlerPolygon = tool.initDrawHandler('Polygon');
+      // handlerPolygon.drawCallback(function (result) {
+      //   var positions = result.object.positions;
+      //   var flatPoints = tool.cartesian3ToPackDegrees(positions);
+      //   // var layer = suepMapScene.layers.find('');
+      // });
+      const flatPoints = [
+        116.45649493969962, 39.91437753603837, 0.17915024656646,
+        116.45986268547416, 39.91432977595183, 0.25367576136813,
+        116.46000422247552, 39.91281766336153, 0.93392057454389,
+        116.45667699267139, 39.91272154436844, 0.24573073263646
+      ]
+
+      $('#flatten').click(function () {
+        // handlerPolygon.activate()
+        layer.addFlattenRegion({
+          position: flatPoints,
+          name: 'flatten'
+        });
+      });
+
+      $('#flattenClear').click(function () {
+        // handlerPolygon.clear();
+        layer.removeFlattenRegion('flatten')
+      });
+
+
+      // 开挖
+      $('#dig').click(function () {
+        layer.addExcavationRegion({
+          position: flatPoints,
+          name: 'flatten'
+        });
+      });
+
+      $('#digClear').click(function () {
+        layer.removeExcavationRegion('flatten')
+      });
+
+      // 选中偏移
+      let offset = new Cesium.Cartesian3(10, 10, 10);
+      $('#offset').click(function () {
+        var selectLayer = suepMapScene.layers.getSelectedLayer();
+        var selection = selectLayer?.getSelection();
+        if (selection.length > 0) {
+          selectLayer.setObjsTranslate(selection, offset);
+        }
+      });
+
+      $('#offsetClear').click(function () {
+        var selectLayer = suepMapScene.layers.getSelectedLayer();
+        var selection = selectLayer?.getSelection();
+        if (selection.length > 0) {
+          selectLayer.removeObjsTranslate(selection);
+        }
+      });
+
+
+      // 绕点飞行
+
+      $('#flyCircle').click(function () {
+        scene.camera.flyCircleLoop = true
+        scene.camera.flyCircle({ x: -2182718.87698366, y: 4385831.446400834, z: 4070613.750671223 })
+      })
+      $('#flyCircleClear').click(function () {
+        scene.camera.stopFlyCircle()
+      })
+      $('#reverse').click(function () {
+        scene.camera.speedRatio *= -1
+      })
+      $('#speed').click(function () {
+        scene.camera.speedRatio = scene.camera.speedRatio > 0 ? scene.camera.speedRatio + 1 : scene.camera.speedRatio - 1;
+      })
+
+      // 沿线飞行
+
+      var routes = new SuperMapCesiumPlugin.RouteCollection(viewer.entities);
+      //添加fpf飞行文件，fpf由SuperMap iDesktop生成
+      var fpfUrl = './data/cbd.fpf';
+      routes.fromFile(fpfUrl);
+      //初始化飞行管理
+      var flyManager = new SuperMapCesiumPlugin.FlyManager({
+        scene: scene,
+        routes: routes
+      });
+      //注册站点到达事件
+      flyManager.stopArrived.addEventListener(function (routeStop) {
+        routeStop.waitTime = 1; // 在每个站点处停留1s
+      });
+
+      flyManager.readyPromise.then(function () { // 飞行路线就绪
+        var currentRoute = flyManager.currentRoute;
+        currentRoute.isLineVisible = true;
+        currentRoute.isStopVisible = true;
+        //生成飞行文件中的所有站点列表
+        var allStops = flyManager.getAllRouteStops();
+        var menu = document.getElementById('stopList');
+        for (var i = 0, j = allStops.length; i < j; i++) {
+          var option = document.createElement('option');
+          option.innerHTML = "站点 " + (i + 1);
+          option.value = allStops[i].index;
+          menu.appendChild(option);
+        }
+
+        $('#show-line').change(function () {
+          currentRoute.isLineVisible = $(this).prop('checked');
+        });
+
+        $('#show-stop').change(function () {
+          currentRoute.isStopVisible = $(this).prop('checked');
+        });
+      })
+
+      $('#stopList').change(function () { //注册站点切换事件
+        flyManager && flyManager.stop();
+        var index = parseInt($(this).val()); // 站点的索引
+        var route = flyManager.currentRoute;
+        var stop = route.get(index);
+        flyManager.currentStopIndex = index;
+        flyManager.viewToStop(stop);
+      });
+
+      $('#play').click(function () {
+        flyManager && flyManager.play();
+      });
+      $('#pause').click(function () {
+        flyManager && flyManager.pause();
+      });
+      $('#stop').click(function () {
+        flyManager && flyManager.stop();
+      });
+
+
+      // 地质体
+
+      // var solidModelsProfile = new SuperMapCesiumPlugin.SolidModelsProfile(suepMapScene);
+      // var models = [];
+      // for (let i = 1; i <= 6; i++) {
+      //   models.push({
+      //     id: i,
+      //     model: `http://172.16.120.191:8090/iserver/services/data-dizhiti/rest/data/datasources/%E5%9C%B0%E8%B4%A8%E4%BD%93/datasets/Layer${i}/features/1.stream`,  //范例数据
+      //   })
+      // }
+
+      // function showModel() {
+      //   solidModelsProfile.addModels(models);
+      //   solidModelsProfile.addedEvent.addEventListener((param) => {
+      //     viewer.camera.flyTo({
+      //       destination: new Cesium.Cartesian3.fromDegrees(param.modelPosition[0].position.x, param.modelPosition[0].position.y, 50000)
+      //     })
+      //   });
+      // }
+
+      // $('#add').click(function () {
+      //   showModel()
+      // });
+
+
+      // 分层设色
+      $('#hyp').click(function () {
+        layer.computeHeight = true
+        let hyp = new SuperMapCesiumPlugin.HypsometricSetting()
+        let floodColorTable = new SuperMapCesiumPlugin.ColorTable()
+        floodColorTable.insert(50, new Cesium.Color(1, 0, 0))
+        floodColorTable.insert(40, new Cesium.Color(255 / 255, 208 / 255, 208 / 255))
+        floodColorTable.insert(30, new Cesium.Color(255 / 255, 155 / 255, 155 / 255))
+        floodColorTable.insert(25, new Cesium.Color(255 / 255, 102 / 255, 102 / 255))
+        floodColorTable.insert(20, new Cesium.Color(255 / 255, 51 / 255, 51 / 255))
+        floodColorTable.insert(15, new Cesium.Color(255 / 255, 0 / 255, 0 / 255))
+        floodColorTable.insert(10, new Cesium.Color(204 / 255, 0 / 255, 0 / 255))
+        floodColorTable.insert(5, new Cesium.Color(153 / 255, 0 / 255, 0 / 255))
+        floodColorTable.insert(0, new Cesium.Color(102 / 255, 0 / 255, 0 / 255))
+        hyp.DisplayMode = SuperMapCesiumPlugin.HypsometricSettingEnum.DisplayMode.FACE
+        hyp.LineColor = new Cesium.Color(1.0, 0.0, 0.0, 1.0)
+        hyp.MinVisibleValue = 0
+        hyp.MaxVisibleValue = 200
+        hyp.ColorTableMinKey = -1
+        hyp.ColorTableMaxKey = 200
+        hyp.ColorTable = floodColorTable
+        hyp.Opacity = 0.75
+        hyp.LineInterval = 1
+        layer.hypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode: SuperMapCesiumPlugin.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL
+        }
+      });
+      $('#hypClear').click(function () {
+        var hyp = new SuperMapCesiumPlugin.HypsometricSetting();
+        hyp.MaxVisibleValue = -1000;
+        layer.hypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode: SuperMapCesiumPlugin.HypsometricSettingEnum.AnalysisRegionMode.ARM_ALL
+        }
+      })
+
+      // 裁剪
+      clipPositions = [
+        { x: -2182488.7480362873, y: 4385751.303501275, z: 4070742.79736215 },
+        { x: -2182761.138004019, y: 4385902.371203141, z: 4070736.6442049714 },
+        { x: -2182651.191277058, y: 4385865.163170562, z: 4070559.182316585 }
+      ]
+      $('#modifyClip').click(function () {
+        layer.setModifyRegions([flatPoints], SuperMapCesiumPlugin.ModifyRegionMode.CLIP_INSIDE);
+      })
+      $('#planeClip').click(function () {
+        layer.setCustomClipPlane(clipPositions[0], clipPositions[1], clipPositions[2]);
+      })
+      $('#boxClip').click(function () {
+        var boxOptions = {
+          dimensions: new Cesium.Cartesian3(100, 100, 100),
+          position: clipPositions[1],
+          clipMode: 'clip_behind_all_plane',
+          heading: 0
+        };
+        layer.setCustomClipBox(boxOptions);
+      })
+      $('#crossClip').click(function () {
+        layer.setCustomClipCross({
+          position: clipPositions[1],
+          dimensions: new Cesium.Cartesian3(100, 100, 100),
+          heading: 0,
+          pitch: 0,
+          roll: 0,
+          extrudeDistance: 1.0
+        });
+      })
+      $('#clearClip').click(function () {
+        layer.clearModifyRegions();
+        layer.clearCustomClipBox();
+      })
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("加载成功");
+      if (typeof Cesium !== "undefined") {
+        onload(Cesium, SuperMapCesiumPlugin);
+      }
+    })
+  </script>
+</body>
+
+</html>

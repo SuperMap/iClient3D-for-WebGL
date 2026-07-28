@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>地质体</title>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <link href="./css/pretty.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="toolbar" class="param-container tool-bar">
+    <button id="profileDZT" class="button black" type="button">剖切</button>
+    <button id="clearDZT" class="button black" type="button">清除</button><br>
+    <button id="clipDZT" class="button black" type="button">裁剪</button>
+    <button id="digDZT" class="button black" type="button">开挖</button>
+    <button id="clearDZT2" class="button black" type="button">清除</button><br>
+  </div>
+
+  <script>
+    async function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      var viewer = new Cesium.Viewer("cesiumContainer", {
+        timeline: true,
+        animation: false,
+      });
+      var scene = viewer.scene;
+      var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({ scene: scene });
+      var suepMapScene = supermapPluginViewer.scene;
+      scene.globe.show = false
+
+      // 地质体
+
+      const clipPos = [
+        { x: -2093206.4761812682, y: 4496544.27241068, z: 3996790.2324428363 },
+        { x: -2101218.8236081228, y: 4492701.737790045, z: 3996872.0014587864 },
+        { x: -2104410.6768284026, y: 4498152.960133402, z: 3989189.8488719305 },
+        { x: -2094937.2549403766, y: 4502142.972420952, z: 3989576.100528142 }
+      ]
+      var solidModelsProfile = new SuperMapCesiumPlugin.SolidModelsProfile(scene);
+      var models = [];
+      for (let i = 1; i <= 6; i++) {
+        models.push({
+          id: i,
+          model: `http://172.16.120.191:8090/iserver/services/data-dizhiti/rest/data/datasources/%E5%9C%B0%E8%B4%A8%E4%BD%93/datasets/Layer${i}/features/1.stream`,  //范例数据
+        })
+      }
+
+      function showModel() {
+        solidModelsProfile.addModels(models);
+        solidModelsProfile.addedEvent.addEventListener((param) => {
+          viewer.camera.flyTo({
+            destination: new Cesium.Cartesian3.fromDegrees(param.modelPosition[0].position.x, param.modelPosition[0].position.y, 50000)
+          })
+        });
+      }
+
+      showModel();
+
+      //笛卡尔转经纬度
+      const cartesianToDegrees = (cartesians, baseHeight = 0) => {
+        let array = [].concat(cartesians);
+        let positions = [];
+        var point3ds = new SuperMapCesiumPlugin.Point3Ds();
+        for (let i = 0, len = array.length; i < len; i++) {
+          let cartographic = Cesium.Cartographic.fromCartesian(array[i]);
+          let longitude = Cesium.Math.toDegrees(cartographic.longitude);
+          let latitude = Cesium.Math.toDegrees(cartographic.latitude);
+          let h = cartographic.height;
+          positions.push(longitude);
+          positions.push(latitude);
+          positions.push(h + baseHeight);
+          var pnt = new SuperMapCesiumPlugin.Point3D(longitude, latitude, h + baseHeight);
+          point3ds.add(pnt);
+        }
+        return {
+          positions: positions,
+          point3ds: point3ds
+        }
+      };
+
+      function clipAndDig(positions, isClip = true) {
+        let dep = isClip ? -7000 : -2000;
+        solidModelsProfile.clippingType = isClip ? SuperMapCesiumPlugin.ClippingType.KeepInside : SuperMapCesiumPlugin.ClippingType.KeepOutside;
+        var point3ds = cartesianToDegrees(positions, 1000).point3ds;
+        var geometry = new SuperMapCesiumPlugin.GeoRegion3D([point3ds]);
+        geometry.extrudedHeight = dep;
+        geometry.isLatLon = false;
+        solidModelsProfile.setClipGeometry(geometry);
+        // 封边
+        var geometryWall = new SuperMapCesiumPlugin.GeoRegion3D([point3ds]);
+        geometryWall.extrudedHeight = dep;
+        geometryWall.closeTop = true;
+        geometryWall.closeBottom = true;
+        geometryWall.isLatLon = false;
+        solidModelsProfile.addProfileGeometry(geometryWall);
+        solidModelsProfile.build();
+      }
+
+      $('#profileDZT').click(function () {
+        for (var i = 0; i < clipPos.length - 1; i++) {
+          var point1 = clipPos[i];
+          var point2 = clipPos[i + 1];
+          var pointArray = [];
+          pointArray.push(point1);
+          pointArray.push(point2);
+          solidModelsProfile.addProfileGeometry(pointArray);
+        }
+        solidModelsProfile.clippingType = SuperMapCesiumPlugin.ClippingType.KeepInside;
+        solidModelsProfile.build();
+        viewer.entities.add({
+          polyline: {
+            positions: clipPos,
+            width: 2,
+            material: Cesium.Color.fromCssColorString('#51ff00')
+          }
+        });
+
+      });
+
+      $('#clearDZT').click(function () {
+        solidModelsProfile.clearProfile();
+        viewer.entities.removeAll()
+      });
+
+      $('#clipDZT').click(function () {
+        clipAndDig(clipPos)
+      });
+
+      $('#digDZT').click(function () {
+        clipAndDig(clipPos, false)
+      });
+
+      $('#clearDZT2').click(function () {
+        solidModelsProfile.clearProfile();
+      });
+
+
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

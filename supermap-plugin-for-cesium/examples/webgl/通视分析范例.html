@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>插件通视分析</title>
+  <link href="./css/pretty.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <script src="./js/config.js"></script>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="loadingbar" class="spinner">
+    <div class="spinner-container container1">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container2">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container3">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+  </div>
+
+  <div id="toolbar" class="param-container tool-bar">
+    <div class="param-item">
+      <button type="button" id="addViewPoint" class="button black">添加观察点</button>
+      <button type="button" id="addTargetPoint" class="button black">添加目标点</button>
+      <button type="button" id="clear" class="button black">清除</button>
+      <br />
+    </div>
+  </div>
+
+  <script>
+    function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      var viewer = new Cesium.Viewer("cesiumContainer");
+      var cesiumScene = viewer.scene;
+      cesiumScene.logarithmicDepthBuffer = true;
+      cesiumScene.globe.show = true;
+
+      var url = "http://172.16.120.103:8090/iserver/services/3D-CBDtest/rest/realspace";
+      var supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+        scene: cesiumScene
+      });
+      var suepMapScene = supermapPluginViewer.scene;
+      const openScenePromise = suepMapScene.open(url);
+
+      var sightline = new SuperMapCesiumPlugin.Sightline(cesiumScene);
+
+      openScenePromise.then((layers) => {
+        sightline.build();
+      });
+
+      var addViewFlag = false;//当前点击状态是否是 添加观察点
+      var addTargetFlag = false;//当前点击状态是否是 添加目标点
+
+      var num = 0;//添加的目标点的点号
+
+      var handler = new Cesium.ScreenSpaceEventHandler(cesiumScene.canvas);
+
+      //鼠标点击事件，添加点
+      handler.setInputAction(function (e) {
+        var position = cesiumScene.pickPosition(e.position);
+        var cartographic = Cartesian2toDegrees(position);
+        if (addViewFlag) {
+          sightline.viewPosition = cartographic;
+        } else if (addTargetFlag) {
+          num += 1;
+          //添加目标点
+          sightline.addTargetPoint({
+            position: cartographic,
+            name: "point" + num
+          });
+
+          sightline.getBarrierPointAsync("point" + num, (point) => {
+            let ids = sightline.getObjectIds();
+            console.log(point, ids)
+          });
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      //鼠标移动事件，更新点
+      handler.setInputAction(function (evt) {
+        if (!addTargetFlag) {
+          return
+        }
+        //鼠标移动，更新最后一次添加的目标点的位置
+        var position = cesiumScene.pickPosition(evt.endPosition);
+        if (!position) {
+          return
+        }
+        sightline.removeTargetPoint("point0");
+        var cartographic = Cartesian2toDegrees(position);
+        sightline.addTargetPoint({
+          position: cartographic,
+          name: "point0"
+        });
+      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+      //鼠标右键事件，结束
+      handler.setInputAction(function () {
+        addViewFlag = false;
+        addTargetFlag = false;
+        sightline.removeTargetPoint("point0");
+      }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+
+      document.getElementById("addViewPoint").onclick = function () {
+        addViewFlag = true;
+      };
+
+      document.getElementById("addTargetPoint").onclick = function () {
+        addViewFlag = false;
+        addTargetFlag = true;
+      };
+
+      document.getElementById("clear").onclick = function () {
+        addViewFlag = false;
+        addTargetFlag = false;
+        num = 0;
+        sightline.removeAllTargetPoint();
+        viewer.entities.removeAll();
+      }
+
+      //笛卡尔转换为经纬度
+      function Cartesian2toDegrees(position) {
+        var cartographic = Cesium.Cartographic.fromCartesian(position);
+        var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        var height = cartographic.height;
+        return [longitude, latitude, height];
+      }
+
+
+
+      $("#loadingbar").remove();
+
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

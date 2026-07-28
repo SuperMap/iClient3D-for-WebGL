@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>新架构插件-ESM</title>
+
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+
+  <style>
+    html,
+    body,
+    #Container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="Container"></div>
+
+  <script>
+    function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      const viewer = new Cesium.Viewer("Container", {});
+      window.viewer = viewer;
+      const scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+      scene.globe.show = true;
+
+      const url = "http://172.16.120.103:8090/iserver/services/3D-CBDCache20200416-2/rest/realspace";
+      const supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+        scene:scene,
+      });
+      const suepMapScene = supermapPluginViewer.scene;
+      suepMapScene.open(url);
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

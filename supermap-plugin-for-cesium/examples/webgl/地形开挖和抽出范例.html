@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>插件3D Tiles</title>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <link href="./css/pretty.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="loadingbar" class="spinner">
+    <div class="spinner-container container1">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container2">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container3">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+  </div>
+
+  <div id="toolbar" class="param-container tool-bar">
+    <div class="param-item">
+      <button type="button" id="excavate" class="button black">开挖</button>
+      <button type="button" id="extract" class="button black">抽出</button>
+      <button type="button" id="remove" class="button black">移除</button>
+      <br />
+    </div>
+  </div>
+
+  <script>
+    async function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      var viewer = new Cesium.Viewer("cesiumContainer", {
+        terrainProvider: new SuperMapCesiumPlugin.SuperMapTerrainProvider({
+          url: 'http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/srtm_54_07@zhufeng',
+          requestVertexNormals: true,
+          isSct: true,
+          invisibility: true
+        }),
+      });
+
+      var scene = viewer.scene;
+      var layer = viewer.imageryLayers.addImageryProvider(await SuperMapCesiumPlugin.SuperMapImageryProvider.fromUrl(
+        "http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/image"
+      ));
+      viewer.flyTo(layer);
+
+
+      var tile_lay = new Cesium.TileCoordinatesImageryProvider({});
+      viewer.imageryLayers.addImageryProvider(tile_lay);
+
+
+      //地形开挖
+      $("#excavate").on("click", function () {
+        var positions = [87.0045636892227, 27.935434687015285, 5829.597096522942, 86.97687217951255, 27.82099608230099, 6269.850238054253,
+          87.08086794834504, 27.752721136112637, 4672.360075469543, 87.15021450275944, 27.85755164696245, 4636.639874176874, 87.09596880564433, 27.964228970072007, 5245.93968751736]
+        viewer.scene.globe.addExcavationRegion({
+          name: 'test',
+          position: positions,
+          height: 50,
+        });
+      })
+
+      //地形抽出
+      $("#extract").on("click", function () {
+        var positions = [87.01718455030036 ,27.97494650276861, 5355.541166774026, 86.89380791119274, 28.05093045228833,5903.565427433231,
+        86.95045479063438, 28.102436374578996, 6624.713892375263, 87.07651820496271, 28.080751160349624, 5396.879986783973];
+        viewer.scene.globe.addExtractRegion({
+          name: 'extract', //名称
+          position: positions, //区域
+          height: 100, //开挖深度
+          extractHeight: 3000, //抽出高度
+          granularity: 100 //精度
+        })
+      })
+
+      //移除开挖或者抽出
+      $("#remove").on("click", function () {
+        // viewer.scene.globe.removeExcavationRegion("test");
+        // viewer.scene.globe.removeAllExcavationRegion();
+        //viewer.scene.globe.removeExtractRegion("extract");
+        // viewer.scene.globe.removeAllExtractRegion()
+      })
+      $("#loadingbar").remove();
+
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

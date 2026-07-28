@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>插件3D Tiles</title>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <link href="./css/pretty.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="loadingbar" class="spinner">
+    <div class="spinner-container container1">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container2">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+    <div class="spinner-container container3">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+      <div class="circle4"></div>
+    </div>
+  </div>
+
+  <div id="toolbar" class="param-container tool-bar">
+    <div class="param-item">
+      <button type="button" id="getSlope" class="button black">分层设色</button>
+      <button type="button" id="remove" class="button black">移除</button>
+    </div>
+  </div>
+
+  <script>
+    async function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      var viewer = new Cesium.Viewer("cesiumContainer", {
+        terrainProvider: new SuperMapCesiumPlugin.SuperMapTerrainProvider({
+          url: 'http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/srtm_54_07@zhufeng',
+          requestVertexNormals: true,
+          isSct: true,
+          invisibility: true
+        }),
+      });
+      var scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+      scene.globe.show = true;
+      var layer = viewer.imageryLayers.addImageryProvider(await SuperMapCesiumPlugin.SuperMapImageryProvider.fromUrl(
+        "http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/image"
+      ));
+      viewer.flyTo(layer)
+      var tile_lay = new Cesium.TileCoordinatesImageryProvider({});
+      viewer.imageryLayers.addImageryProvider(tile_lay);
+
+      var hyp = new SuperMapCesiumPlugin.HypsometricSetting();
+      //设置分层设色的显示模式为线
+      hyp.DisplayMode = SuperMapCesiumPlugin.HypsometricSettingEnum.DisplayMode.LINE;
+      //设置线颜色为红色
+      hyp.LineColor = new Cesium.Color(1.0, 0.0, 0.0, 1.0);
+      //等高线间隔为100m
+      hyp.LineInterval = 100.0;
+      //设置分层设色的最大/最小可见高度
+      hyp.MaxVisibleValue = 9000;
+      hyp.MinVisibleValue = 0;
+      //设置分层设色颜色表的最大/最小key值,表示在此高度范围内显示颜色表
+      hyp.ColorTableMinKey = 2736.88110351563;
+      hyp.ColorTableMaxKey = 5597.06640625;
+      //新建颜色表
+      var colorTable = new SuperMapCesiumPlugin.ColorTable();
+
+      colorTable.insert(5597.06640625, new Cesium.Color(0, 0, 255 / 255));
+      colorTable.insert(5406.3873860677086, new Cesium.Color(0, 51 / 255, 255 / 255));
+      colorTable.insert(5215.7083658854172, new Cesium.Color(0, 102 / 255, 255 / 255));
+      colorTable.insert(5025.0293457031257, new Cesium.Color(0, 153 / 255, 255 / 255));
+      colorTable.insert(4834.3503255208343, new Cesium.Color(0, 204 / 255, 255 / 255));
+      colorTable.insert(4643.6713053385429, new Cesium.Color(0, 255 / 255, 255 / 255));
+      colorTable.insert(4452.9922851562524, new Cesium.Color(51 / 255, 255 / 255, 204 / 255));
+      colorTable.insert(4262.3132649739609, new Cesium.Color(102 / 255, 255 / 255, 153 / 255));
+      colorTable.insert(4071.6342447916695, new Cesium.Color(153 / 255, 255 / 255, 102 / 255));
+      colorTable.insert(3880.9552246093781, new Cesium.Color(204 / 255, 255 / 255, 51 / 255));
+      colorTable.insert(3690.2762044270867, new Cesium.Color(255 / 255, 255 / 255, 0));
+      colorTable.insert(3499.5971842447952, new Cesium.Color(255 / 255, 204 / 255, 0));
+      colorTable.insert(3308.9181640625038, new Cesium.Color(255 / 255, 153 / 255, 0));
+      colorTable.insert(3118.2391438802129, new Cesium.Color(255 / 255, 102 / 255, 0));
+      colorTable.insert(2927.5601236979214, new Cesium.Color(255 / 255, 51 / 255, 0));
+      colorTable.insert(2736.88110351563, new Cesium.Color(255 / 255, 0, 0));
+
+      //设置分层设色的颜色表
+      hyp.ColorTable = colorTable;
+      //设置分层设色的透明度
+      hyp.Opacity = 0.4;
+      $("#getSlope").on("click", function () {
+        var positions = [86.64540818491831, 28.06445384184716, 0.08724847611232937, 86.64779339127462, 27.762545486981615, 0.25878894914999767,
+          87.3992335096973, 27.750745675004357, -0.10181286459194992, 87.39304145120929, 28.02253775104584, -0.25967272949516057]
+        hyp.CoverageArea = positions;
+        hyp.DisplayMode = SuperMapCesiumPlugin.HypsometricSettingEnum.DisplayMode.FACE_AND_LINE;
+        viewer.scene.globe.HypsometricSetting = {
+          hypsometricSetting: hyp,
+          analysisMode: SuperMapCesiumPlugin.HypsometricSettingEnum.AnalysisRegionMode.ARM_REGION
+        };
+      })
+
+      $("#remove").on("click", function () {
+        viewer.scene.globe.HypsometricSetting = undefined;
+      })
+
+      $("#loadingbar").remove();
+
+    }
+    if (typeof Cesium !== "undefined") {
+      //window.startupCalled = true;
+      onload(Cesium,SuperMapCesiumPlugin);
+    }
+  </script>
+</body>
+
+</html>

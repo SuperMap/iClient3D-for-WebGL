@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>插件3D Tiles</title>
+    <!-- 引入原生Cesium和SuperMap插件 -->
+    <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+    <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <link href="./css/pretty.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="cesiumContainer"></div>
+    <div id="loadingbar" class="spinner">
+      <div class="spinner-container container1">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container2">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container3">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+    </div>
+
+    <div id="toolbar" class="param-container tool-bar">
+      <div class="param-item">
+        <button type="button" id="getSlope" class="button black">获取坡度坡向</button>
+        <button type="button" id="remove" class="button black">移除</button>
+      </div>
+    </div>
+
+    <script>
+     async function onload(Cesium, SuperMapCesiumPlugin) {
+        if (SuperMapCesiumPlugin === undefined) {
+          return;
+        }
+
+        var viewer = new Cesium.Viewer("cesiumContainer",{
+              terrainProvider: new SuperMapCesiumPlugin.SuperMapTerrainProvider({
+                    url: 'http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/srtm_54_07@zhufeng',
+                    requestVertexNormals: true,
+                    isSct: true,
+                    invisibility: true
+                }),
+        });
+
+        var scene = viewer.scene;
+        var layer = viewer.imageryLayers.addImageryProvider(await SuperMapCesiumPlugin.SuperMapImageryProvider.fromUrl(
+          "http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/image"
+        ));
+        viewer.flyTo(layer);
+        
+        var tile_lay = new Cesium.TileCoordinatesImageryProvider({});
+        viewer.imageryLayers.addImageryProvider(tile_lay);
+
+      $("#getSlope").on("click", function () {
+        var positions = [87.0045636892227,27.935434687015285,5829.597096522942,86.97687217951255, 27.82099608230099,6269.850238054253,
+        87.08086794834504,27.752721136112637,4672.360075469543,87.15021450275944,27.85755164696245,4636.639874176874,87.09596880564433,27.964228970072007,5245.93968751736]
+        var slope = new SuperMapCesiumPlugin.SlopeSetting();
+        slope.DisplayMode = SuperMapCesiumPlugin.SlopeSettingEnum.DisplayMode.FACE_AND_ARROW;
+        slope.MaxVisibleValue = "78";
+        slope.MinVisibleValue = "0";
+        var colorTable = new SuperMapCesiumPlugin.ColorTable();
+        colorTable.insert(80, new Cesium.Color(255 / 255, 0 / 255, 0 / 255));
+        colorTable.insert(50, new Cesium.Color(221 / 255, 224 / 255, 7 / 255));
+        colorTable.insert(30, new Cesium.Color(20 / 255, 187 / 255, 18 / 255));
+        colorTable.insert(20, new Cesium.Color(0, 161 / 255, 1));
+        colorTable.insert(0, new Cesium.Color(9 / 255, 9 / 255, 255 / 255));
+        var wide;
+        wide = SuperMapCesiumPlugin.HypsometricSettingEnum.AnalysisRegionMode.ARM_REGION;
+        slope.ColorTable = colorTable;
+        slope.Opacity = 0.5;
+        slope.CoverageArea = positions;
+        viewer.scene.globe.SlopeSetting = {
+            slopeSetting: slope,
+            analysisMode: wide
+        };
+      })
+
+      $("#remove").on("click", function () {
+        viewer.scene.globe.SlopeSetting = undefined;
+      })
+        $("#loadingbar").remove();
+
+      }
+      if (typeof Cesium !== "undefined") {
+        //window.startupCalled = true;
+        onload(Cesium,SuperMapCesiumPlugin);
+      }
+    </script>
+  </body>
+</html>

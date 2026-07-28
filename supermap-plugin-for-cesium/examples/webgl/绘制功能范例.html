@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>绘制-DrawHandler</title>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+
+  <!-- 引入原生Cesium和SuperMap插件 -->
+  <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+  <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+
+  <style>
+    html,
+    body,
+    #Container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="Container"></div>
+  <div class="toolbar">
+    <button id="point">点</button>
+    <button id="polyline">线</button>
+    <button id="polygon">面</button>
+    <button id="mark">图标</button>
+    <button id="box">盒子</button>
+    <button id="circle">圆圈</button>
+    <button id="linePosition">线坐标</button>
+    <button id="activate">激活</button>
+    <button id="deactivate">失活</button>
+    <button id="clear">清除</button>
+    <button id="destroy">销毁</button>
+  </div>
+  <script>
+    function onload(Cesium, SuperMapCesiumPlugin) {
+      if (SuperMapCesiumPlugin === undefined) {
+        return;
+      }
+
+      const viewer = new Cesium.Viewer("Container", {});
+      window.viewer = viewer;
+      const scene = viewer.scene;
+      scene.logarithmicDepthBuffer = true;
+      scene.globe.show = true;
+
+      const supermapPluginViewer = new SuperMapCesiumPlugin.CesiumViewer({
+        scene: scene,
+      });
+      const suepMapScene = supermapPluginViewer.scene;
+      window.supermapPluginViewer = supermapPluginViewer;
+
+      // 打开场景
+      const promise = suepMapScene.open("http://172.16.120.191:8090/iserver/services/3D-CBDCache20200416/rest/realspace");
+      promise.then(layers => {
+        console.log(layers);
+      })
+
+      let handler
+      document.getElementById("point").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Point);
+        handler.activate();
+      }
+      document.getElementById("polyline").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Line);
+        handler.activate();
+      }
+      document.getElementById("polygon").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Polygon);
+        handler.activate();
+      }
+      document.getElementById("mark").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Marker);
+        handler.activate();
+      }
+      document.getElementById("box").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Box);
+        handler.activate();
+      }
+      document.getElementById("circle").onclick = function () {
+        handler = new SuperMapCesiumPlugin.DrawHandler(viewer, SuperMapCesiumPlugin.DrawMode.Circle);
+        handler.activate();
+        // handler.drawEvt.addEventListener(function (result) {
+        //   console.log("result:", result);
+        //   handler.activate();
+        // });
+        
+      }
+      document.getElementById("linePosition").onclick = function () {
+        console.log("绘制线的坐标:", handler && handler.getLinePositions());
+      }
+      document.getElementById("activate").onclick = function () {
+        handler && handler.activate();
+      }
+      document.getElementById("deactivate").onclick = function () {
+        handler && handler.deactivate();
+      }
+      document.getElementById("clear").onclick = function () {
+        handler && handler.clear();
+      }
+      document.getElementById("destroy").onclick = function () {
+        handler && handler.destroy();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("加载成功");
+      if (typeof Cesium !== "undefined") {
+        onload(Cesium, SuperMapCesiumPlugin);
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>插件3D Tiles</title>
+  <!-- 引入原生Cesium和SuperMap插件 -->
+    <link href="../../Build/Cesium-1.133/Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script src="../../Build/Cesium-1.133/Cesium/Cesium.js"></script>
+    <script src="../../Build/SuperMapCesiumPlugin/SuperMapCesiumPlugin.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <link href="./css/pretty.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="cesiumContainer"></div>
+    <div id="loadingbar" class="spinner">
+      <div class="spinner-container container1">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container2">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+      <div class="spinner-container container3">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="circle4"></div>
+      </div>
+    </div>
+
+    <div id="toolbar" class="param-container tool-bar">
+      <div class="param-item">
+        <button type="button" id="getSlope" class="button black">获取坡度</button>
+        <button type="button" id="getDirection" class="button black">获取坡向</button>
+      </div>
+    </div>
+
+    <script>
+     async function onload(Cesium, SuperMapCesiumPlugin) {
+        if (SuperMapCesiumPlugin === undefined) {
+          return;
+        }
+
+        var viewer = new Cesium.Viewer("cesiumContainer",{
+              terrainProvider: new SuperMapCesiumPlugin.SuperMapTerrainProvider({
+                    url: 'http://172.16.120.103:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/srtm_54_07@zhufeng',
+                    requestVertexNormals: true,
+                    isSct: true,
+                    invisibility: true
+                }),
+        });
+        var scene = viewer.scene;
+        scene.logarithmicDepthBuffer = true;
+        scene.globe.show = true;
+        var layer = viewer.imageryLayers.addImageryProvider(await SuperMapCesiumPlugin.SuperMapImageryProvider.fromUrl(
+          "http://172.16.120.191:8090/iserver/services/3D-ZhuFengDiXingYingXiang/rest/realspace/datas/image"
+        ));
+        viewer.flyTo(layer)
+        var tile_lay = new Cesium.TileCoordinatesImageryProvider({});
+        viewer.imageryLayers.addImageryProvider(tile_lay);
+
+        var point = new Cesium.Cartographic.fromDegrees(87.0, 28.0, 0.0);
+
+      $("#getSlope").on("click", function () {
+        var slope = scene.globe.getSlopeValue(point);
+        console.log(`坡度值：${slope}`)
+      })
+
+      $("#getDirection").on("click", function () {
+        var slopeDirection = scene.globe.getSlopeDirectionValue(point);
+        console.log(`坡向值：${slope}`)
+      })
+
+        $("#loadingbar").remove();
+
+      }
+      if (typeof Cesium !== "undefined") {
+        //window.startupCalled = true;
+        onload(Cesium,SuperMapCesiumPlugin);
+      }
+    </script>
+  </body>
+</html>

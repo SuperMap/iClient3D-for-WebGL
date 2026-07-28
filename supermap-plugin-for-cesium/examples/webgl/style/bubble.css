@@ -1,0 +1,285 @@
+.sm-div-graphic {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.divpoint-color {
+    color: #2b2929;
+  }
+  
+  .divpoint-background {
+    background: rgba(255, 255, 255, 0.85);
+  }
+  
+  .divpoint-wrap {
+    position: relative;
+    padding: 30px;
+    overflow: hidden;
+  }
+  
+  .divpoint .area {
+    position: relative;
+    min-width: 180px;
+  }
+  
+  .divpoint .b-t {
+    position: absolute;
+    top: 0;
+    left: 44px;
+    right: 0;
+    height: 1px;
+    z-index: 10;
+  }
+  
+  .divpoint .b-r {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 44px;
+    width: 1px;
+    z-index: 10;
+  }
+  
+  .divpoint .b-b {
+    position: absolute;
+    left: 0;
+    right: 44px;
+    bottom: 0;
+    height: 1px;
+    z-index: 10;
+  }
+  
+  .divpoint .b-l {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    z-index: 10;
+  }
+  
+  .divpoint .b-t-l {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 62px;
+    transform: rotate(45deg) translate(52px, -22px);
+    z-index: 10;
+  }
+  
+  .divpoint .b-b-r {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    height: 62px;
+    transform: rotate(45deg) translate(-52px, 22px);
+    z-index: 10;
+  }
+  
+  .divpoint .label-wrap {
+    padding-left: 12px;
+    color: #fff;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
+  .divpoint .title {
+    margin-top: 20px;
+    padding: 0 12px 0 30px;
+    height: 36px;
+    line-height: 36px;
+    position: relative;
+    color: white;
+  }
+  
+  .divpoint .title::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: 2px;
+  }
+  
+  .divpoint .label-content {
+    padding: 15px 0;
+  }
+  
+  .divpoint .data-li {
+    padding: 4px 45px 4px 0;
+  }
+  
+  .divpoint .data-label, .data-value {
+    display: inline-block;
+  }
+  
+  .divpoint .data-value {
+    font-size: 14px;
+  }
+  
+  .divpoint .label-num {
+    margin-right: 3px;
+    color: #07b3f7;
+    font-weight: 600;
+  }
+  
+  .divpoint .label-tag {
+    display: inline-block;
+    position: relative;
+    margin-right: 6px;
+    padding: 0 6px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #909399;
+    border-radius: 4px;
+  }
+  
+  .divpoint .label-tag::after {
+    content: attr(alt);
+    display: inline-block;
+    position: absolute;
+    bottom: -22px;
+    right: -35px;
+    z-index: -1;
+    padding: 2px 4px;
+    color: #fff;
+    font-size: 14px;
+    background-color: #333;
+    border-radius: 3px;
+    opacity: 0;
+    transition: all .3s ease-in;
+  }
+  
+  .divpoint .label-tag:hover::after {
+    opacity: 1;
+    z-index: 11;
+  }
+  
+  .divpoint .data-value-status-0 {
+    background-color: #282bf0;
+  }
+  
+  .divpoint .data-value-status-1 {
+    background-color: #b13564;
+  }
+  
+  .divpoint .data-value-status-2 {
+    background-color: #5ecd2b;
+  }
+  
+  .divpoint .arrow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 45px;
+    height: 2px;
+    transform: rotate(-45deg) translate(5px, -15px);
+  }
+  
+  
+  .divpoint-theme-29baf1 .b-t, .divpoint-theme-29baf1 .b-r, .divpoint-theme-29baf1 .b-b, .divpoint-theme-29baf1 .b-l, .divpoint-theme-29baf1 .b-t-l, .divpoint-theme-29baf1 .b-b-r {
+    background-color: #aacd2b;
+    box-shadow: 0 0 10px 2px #afcd2b;
+  }
+  
+  .divpoint-theme-29baf1 .area {
+    background-image: linear-gradient(135deg, transparent 30px, #f0d2286c 30px, #f8d4056c 50%, transparent 50%), linear-gradient(-45deg, transparent 30px, #f0b1286c 30px, #f3c7016c 50.1%, transparent 50%);
+  }
+  
+  .divpoint-theme-29baf1 .title {
+    background-image: linear-gradient(135deg, transparent 25px, #e9b709 25px);
+  }
+  
+  .divpoint-theme-29baf1 .arrow, .divpoint-theme-29baf1 .title::before {
+    background-color: #f1f503;
+  }
+  
+  
+  .divpoint-theme-06e34a .b-t, .divpoint-theme-06e34a .b-r, .divpoint-theme-06e34a .b-b, .divpoint-theme-06e34a .b-l, .divpoint-theme-06e34a .b-t-l, .divpoint-theme-06e34a .b-b-r {
+    background-color: #06e34a;
+    box-shadow: 0 0 10px 2px #06e34a;
+  }
+  
+  .divpoint-theme-06e34a .area {
+    background-image: linear-gradient(135deg, transparent 30px, #06e3486c 30px, #06e3486c 50%, transparent 50%), linear-gradient(-45deg, transparent 30px, #06e3486c 30px, #06e3486c 50.1%, transparent 50%);
+  }
+  
+  .divpoint-theme-06e34a .title {
+    background-image: linear-gradient(135deg, transparent 25px, #06e34a 25px);
+  }
+  
+  .divpoint-theme-06e34a .arrow, .divpoint-theme-06e34a .title::before {
+    background-color: #06e34a;
+  }
+  
+  
+  .divpoint-theme-e3064f .b-t, .divpoint-theme-e3064f .b-r, .divpoint-theme-e3064f .b-b, .divpoint-theme-e3064f .b-l, .divpoint-theme-e3064f .b-t-l, .divpoint-theme-e3064f .b-b-r {
+    background-color: #e3064f;
+    box-shadow: 0 0 10px 2px #e3064f;
+  }
+  
+  .divpoint-theme-e3064f .area {
+    background-image: linear-gradient(135deg, transparent 30px, #e306506c 30px, #e306506c 50%, transparent 50%), linear-gradient(-45deg, transparent 30px, #e306506c 30px, #e306506c 50%, transparent 50%);
+  }
+  
+  .divpoint-theme-e3064f .title {
+    background-image: linear-gradient(135deg, transparent 25px, #e3064f 25px);
+  }
+  
+  .divpoint-theme-e3064f .arrow, .divpoint-theme-e3064f .title::before {
+    background-color: #e3064f;
+  }
+  
+  
+  .divpoint-theme-e9b709 .b-t, .divpoint-theme-e9b709 .b-r, .divpoint-theme-e9b709 .b-b, .divpoint-theme-e9b709 .b-l, .divpoint-theme-e9b709 .b-t-l, .divpoint-theme-e9b709 .b-b-r {
+    background-color: #2bcdbb;
+    box-shadow: 0 0 10px 2px #2bcdbb;
+  }
+  
+  .divpoint-theme-e9b709 .area {
+    background-image: linear-gradient(135deg, transparent 30px, #2bcdbb 30px, #09e9de6c 50%, transparent 50%), linear-gradient(-45deg, transparent 30px, #e9b9096c 30px, #e9b9096c 50%, transparent 50%);
+  }
+  
+  .divpoint-theme-e9b709 .title {
+    background-image: linear-gradient(135deg, transparent 25px, #2bcdbb 25px);
+  }
+  
+  .divpoint-theme-e9b709 .arrow, .divpoint-theme-e9b709 .title::before {
+    background-color: #2bcdbb;
+  }
+  
+  
+  
+  .sm-gradient-label {
+    text-align: center;
+    padding: 5px 30px;
+    margin: 0;
+    color: #fff;
+    background: linear-gradient(rgb(7 10 203 / 75%), rgb(16 238 220));
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    max-height: 130px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space:nowrap;
+  }
+  
+  .sm-gradient-label:after {
+    content: "";
+    position: absolute;
+    bottom: -60px;
+    left: calc(50% - 3px);
+    display: block;
+    width: 3px;
+    height: 60px;
+    border-right: 3px solid #2bcdbb;
+  } 
+  
